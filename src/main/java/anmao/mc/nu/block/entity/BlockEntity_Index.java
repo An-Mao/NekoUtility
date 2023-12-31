@@ -2,6 +2,8 @@ package anmao.mc.nu.block.entity;
 
 import anmao.mc.nu.amlib.datatype._DataType_EnchantData;
 import anmao.mc.nu.amlib.datatype._DataType_StringIntInt;
+import anmao.mc.nu.network.index.Net_Index_Core;
+import anmao.mc.nu.network.index.packet.Packet_Index_ServerToClient;
 import anmao.mc.nu.screen.Screen_IndexMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
@@ -45,6 +48,7 @@ public class BlockEntity_Index extends BlockEntity implements MenuProvider {
     //true : in
     //false : out
     private boolean TYPE = true;
+    private Player player;
     private final _DataType_EnchantData enchantData;
     private LazyOptional<IItemHandler> lazyOptional = LazyOptional.empty();
     public BlockEntity_Index(BlockPos pPos, BlockState pBlockState) {
@@ -110,6 +114,7 @@ public class BlockEntity_Index extends BlockEntity implements MenuProvider {
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+        this.player = player;
         return new Screen_IndexMenu(i,inventory,this,this.data);
     }
 
@@ -154,6 +159,8 @@ public class BlockEntity_Index extends BlockEntity implements MenuProvider {
             this.itemStackHandler.extractItem(SLOT_INPUT_ITEM,1,false);
             in.getEnchantmentTags().clear();
             this.itemStackHandler.setStackInSlot(SLOT_OUTPUT,new ItemStack(in.getItem(),1));
+            //saveAdditional(this.getPersistentData());
+            Net_Index_Core.sendToPlayer(new Packet_Index_ServerToClient(getUpdateTag()), (ServerPlayer) this.player);
         }
     }
 
@@ -184,6 +191,11 @@ public class BlockEntity_Index extends BlockEntity implements MenuProvider {
 
     public void setTYPE(boolean TYPE) {
         this.TYPE = TYPE;
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
     }
 
     @Override

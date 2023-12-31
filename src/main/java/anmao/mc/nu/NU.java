@@ -2,7 +2,9 @@ package anmao.mc.nu;
 
 import anmao.mc.nu.block.Blocks;
 import anmao.mc.nu.block.entity.BlockEntities;
+import anmao.mc.nu.event.Event_All;
 import anmao.mc.nu.item.Items;
+import anmao.mc.nu.network.index.Net_Index_Core;
 import anmao.mc.nu.screen.Screen_IndexMenu;
 import anmao.mc.nu.screen.Screen_IndexScreen;
 import anmao.mc.nu.screen.Screen_MenuTypes;
@@ -50,16 +52,17 @@ public class NU
         Items.register(modEventBus);
         Blocks.reg(modEventBus);
         BlockEntities.reg(modEventBus);
-
         Screen_MenuTypes.reg(modEventBus);
 
-        //MinecraftForge.EVENT_BUS.register(this);
+        modEventBus.addListener(this::commonSetup);
+        MinecraftForge.EVENT_BUS.register(this);
         //modEventBus.addListener(this::addCreative);
         //ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
+        Net_Index_Core.reg();
     }
 
     // Add the example block item to the building blocks tab

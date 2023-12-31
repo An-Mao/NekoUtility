@@ -10,23 +10,30 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu> {
     private ImageButton[] enchantButton = new ImageButton[7];
     private int x,y;
     private final Font font = Minecraft.getInstance().font;
     private static final ResourceLocation TEXTURE = new ResourceLocation(NU.MOD_ID,"textures/gui/index.png");
-    private final HashMap<Enchantment, _DataType_StringIntInt> enchantData;
+    private HashMap<Enchantment, _DataType_StringIntInt> enchantData;
     private final ArrayList<Enchantment> enchants = new ArrayList<>();
     private final ArrayList<_DataType_StringIntInt> enchantInfo = new ArrayList<>();
     private int ROW = 0;
@@ -36,6 +43,7 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
     private HashMap<Enchantment,Integer> selectEnchants = new HashMap<>();
     public Screen_IndexScreen(Screen_IndexMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
+        System.out.println("-------Screen Start------");
         enchantData = menu.getEnchantData();
         breakEnchantData();
     }
@@ -117,30 +125,6 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
 
         guiGraphics.blit(TEXTURE,x,y,imageWidth,imageHeight,0,0,imageWidth,imageHeight,367,imageHeight);
         renderProgress(guiGraphics);
-        //renderEnchant(guiGraphics);
-    }
-
-    private void renderEnchant(GuiGraphics guiGraphics) {
-        //HashMap<Enchantment, _DataType_StringIntInt> enchantData = menu.getEnchantData();
-        //System.out.println("ed::"+enchantData.size());
-        ItemStack inputItem = menu.getInputItem();
-        AtomicInteger a = new AtomicInteger();
-        int nx = x+5;
-        enchantData.forEach((enchantment, dataTypeStringIntInt) -> {
-            if (!(inputItem == ItemStack.EMPTY)) {
-                if (!enchantment.canEnchant(inputItem)){
-                    return;
-                }
-            }
-            a.getAndIncrement();
-            int ny = y+ a.get() *20;
-            //guiGraphics.blit(TEXTURE,nx,ny,88,18,279,61,88,18,367,166);
-           // guiGraphics.drawString(font,enchantment.getFullname(dataTypeStringIntInt.getMaxLvl()),nx+3,ny+3,0x336699);
-            this.addRenderableWidget(new ImageButton(nx,ny,88,18,279,61,0,TEXTURE,367,166,(pButton -> {
-                System.out.println("text");
-            }),enchantment.getFullname(1)));
-        });
-
     }
 
     private void renderProgress(GuiGraphics guiGraphics){
@@ -203,5 +187,47 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
     @Override
     protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
         super.renderLabels(pGuiGraphics, pMouseX, pMouseY);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void handlePacket(CompoundTag msg) {
+        this.enchantData = new HashMap<>();
+        ListTag es = msg.getList("index.enchants", Tag.TAG_COMPOUND);
+        for (int i = 0; i < es.size(); i++){
+            CompoundTag compoundtag = es.getCompound(i);
+            BuiltInRegistries.ENCHANTMENT.getOptional(ResourceLocation.tryParse(compoundtag.getString("eid"))).ifPresent((enchantment) -> {
+                _DataType_StringIntInt stringIntInt = new _DataType_StringIntInt();
+
+                int lvl = Mth.clamp(compoundtag.getInt("max"), 0, 255);
+                stringIntInt.setEid(compoundtag.getString("eid"));
+                stringIntInt.setXp(compoundtag.getInt("xp"));
+                stringIntInt.setMaxLvl(lvl);
+                enchantData.put(enchantment, stringIntInt);
+            });
+        }
+        breakEnchantData();
     }
 }
