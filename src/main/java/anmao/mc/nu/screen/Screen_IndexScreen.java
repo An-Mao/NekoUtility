@@ -1,8 +1,11 @@
 package anmao.mc.nu.screen;
 
 import anmao.mc.nu.NU;
+import anmao.mc.nu.amlib.AM_EnchantHelp;
 import anmao.mc.nu.amlib.datatype._DataType_EnchantData;
 import anmao.mc.nu.amlib.datatype._DataType_StringIntInt;
+import anmao.mc.nu.network.index.Net_Index_Core;
+import anmao.mc.nu.network.index.packet.Packet_Index_ClientToServer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -19,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -39,7 +43,7 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
     private int ROW = 0;
     private int[] buttonIndex = new int[7];
 
-    private ImageButton Button_Left,Button_right;
+    private ImageButton Button_Left,Button_right,Button_Mode,Button_EnchantItem;
     private HashMap<Enchantment,Integer> selectEnchants = new HashMap<>();
     public Screen_IndexScreen(Screen_IndexMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -64,7 +68,15 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
         imageWidth = 276;
         x = (width - imageWidth)/2;
         y = (height - imageHeight)/2;
+        addMustButton();
+    }
+    private void addMustButton(){
         addEnchantButton();
+        addPageButton();
+        addModeButton();
+        addEnchantItemButton();
+    }
+    private void addPageButton(){
         Button_Left = new ImageButton(x+103,y+64,
                 12,
                 19,
@@ -83,6 +95,26 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
                 367,
                 166,(pButton -> addROW()),Component.empty());
         this.addRenderableWidget(Button_right);
+    }
+    private void addModeButton(){
+        Button_Mode = new ImageButton(x,y,12,12,200,100,0,TEXTURE,367,166,(pButton -> {}),Component.empty());
+        this.addRenderableWidget(Button_Mode);
+    }
+    private void addEnchantItemButton(){
+        Button_EnchantItem = new ImageButton(x+90,y+20,12,12,200,100,0,TEXTURE,367,166,(pButton -> sendSelectEnchant()),Component.empty());
+        this.addRenderableWidget(Button_EnchantItem);
+    }
+    private void sendSelectEnchant(){
+        if (selectEnchants.isEmpty()){
+            return;
+        }
+        CompoundTag lDat = AM_EnchantHelp.EnchantsToCompoundTag(selectEnchants);
+
+        lDat.putInt("be.x",menu.getX());
+        lDat.putInt("be.y",menu.getY());
+        lDat.putInt("be.z",menu.getZ());
+        //System.out.println("send"+lDat);
+        Net_Index_Core.sendToServer(new Packet_Index_ClientToServer(lDat));
     }
     private void addROW(){
         if (ROW < enchants.size() / 7){
@@ -153,7 +185,7 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
             //System.out.println("eii::"+m);
             if (m < enchants.size()){
                 boolean show = true;
-                if (inputItem  != ItemStack.EMPTY){
+                if (inputItem  != ItemStack.EMPTY && inputItem.getItem() != Items.BOOK){
                     //System.out.println(":item:"+inputItem);
                     while (!(enchants.get(m).canEnchant(inputItem))){
                         m++;

@@ -25,7 +25,7 @@ public class Screen_IndexMenu extends AbstractContainerMenu {
     private final Level level;
     private final ContainerData data;
     public Screen_IndexMenu(int pContainerId, Inventory inventory , FriendlyByteBuf ex) {
-        this(pContainerId,inventory,inventory.player.level().getBlockEntity(ex.readBlockPos()),new SimpleContainerData(2));
+        this(pContainerId,inventory,inventory.player.level().getBlockEntity(ex.readBlockPos()),new SimpleContainerData(5));
     }
     public Screen_IndexMenu(int cid, Inventory inv, BlockEntity ent,ContainerData dat){
         super(Screen_MenuTypes.INDEX_MENU.get(), cid);
@@ -65,6 +65,15 @@ public class Screen_IndexMenu extends AbstractContainerMenu {
         int maxProgress = data.get(1);
         int progressSize = 24;
         return maxProgress != 0 && progress != 0 ? progress * progressSize / maxProgress : 0;
+    }
+    public int getX(){
+        return data.get(2);
+    }
+    public int getY(){
+        return data.get(3);
+    }
+    public int getZ(){
+        return data.get(4);
     }
     private static final int HOT_BAR_SLOT_COUNT = 9;
     private static final int PLAYER_INVENTORY_ROW_COUNT = 3;

@@ -1,5 +1,6 @@
 package anmao.mc.nu.amlib.datatype;
 
+import anmao.mc.nu.amlib.AM_EnchantHelp;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -48,6 +49,19 @@ public class _DataType_EnchantData {
         dat.putInt(SAVE_DAT_ENCHANT_XP,xp);
         return dat;
     }
+    public void addEnchant(String eid,int pLvl){
+        Enchantment lEnchant = AM_EnchantHelp.IdToEnchant(eid);
+        _DataType_StringIntInt lEnchantData ;
+        if (enchantData.containsKey(lEnchant)){
+            lEnchantData = enchantData.get(lEnchant);
+        }else {
+            lEnchantData = new _DataType_StringIntInt();
+        }
+        lEnchantData.setEid(eid);
+        lEnchantData.addXp(lvlToXp(pLvl));
+        lEnchantData.setMaxLvl(pLvl);
+        enchantData.put(lEnchant,lEnchantData);
+    }
     public void addToEnchantData(ItemStack item){
         ListTag es = item.getEnchantmentTags();
         for(int i = 0; i < es.size(); ++i) {
@@ -72,5 +86,21 @@ public class _DataType_EnchantData {
     }
     public HashMap<Enchantment, _DataType_StringIntInt> getEnchantData() {
         return enchantData;
+    }
+
+    public int getLvl(Enchantment pEnchantment){
+        return enchantData.get(pEnchantment).getMaxLvl();
+    }
+    public int getXp(Enchantment pEnchantment){
+        return enchantData.get(pEnchantment).getXp();
+    }
+
+    public boolean dimXp(Enchantment pEnchantment,int pLvl){
+        int lXp = getXp(pEnchantment) - lvlToXp(pLvl);
+        if (lXp < 0){
+            return false;
+        }
+        enchantData.get(pEnchantment).setXp(lXp);
+        return true;
     }
 }

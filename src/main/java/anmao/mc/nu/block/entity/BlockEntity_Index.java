@@ -1,5 +1,6 @@
 package anmao.mc.nu.block.entity;
 
+import anmao.mc.nu.amlib.AM_EnchantHelp;
 import anmao.mc.nu.amlib.datatype._DataType_EnchantData;
 import anmao.mc.nu.amlib.datatype._DataType_StringIntInt;
 import anmao.mc.nu.network.index.Net_Index_Core;
@@ -7,7 +8,9 @@ import anmao.mc.nu.network.index.packet.Packet_Index_ServerToClient;
 import anmao.mc.nu.screen.Screen_IndexMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -21,8 +24,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,31 +41,55 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class BlockEntity_Index extends BlockEntity implements MenuProvider {
-    private final ItemStackHandler itemStackHandler = new ItemStackHandler(3);
-    private static final int SLOT_INPUT_ITEM = 0;
-    private static final int SLOT_OUTPUT = 1;
-    private static final int SLOT_INPUT_MATERIAL = 2;
-
+    /**
+     * slot
+     * 0 -> input item
+     * 1 -> output item
+     * 2 -> material item
+     */
+    private static final int[] SLOTS = {0,1,2};
+    private int getInputSlot (){
+        return SLOTS[0];
+    };
+    private int getOutputSlot (){
+        return SLOTS[1];
+    }
+    private int getMaterialSlot(){
+        return SLOTS[2];
+    }
+    private final ItemStackHandler itemStackHandler = new ItemStackHandler(SLOTS.length);
     protected final ContainerData data;
+    private final BlockPos blockPos;
     private int progress = 0;
     private int maxProgress = 70;
-    //true : in
-    //false : out
-    private boolean TYPE = true;
+    //0 : in
+    //1 : out
+    private int TYPE = 0;
+    private boolean isInMode(){
+        return TYPE == 0;
+    }
+    private void setMode(int t){
+        TYPE = t;
+    }
     private Player player;
     private final _DataType_EnchantData enchantData;
     private LazyOptional<IItemHandler> lazyOptional = LazyOptional.empty();
     public BlockEntity_Index(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntities.INDEX.get(), pPos, pBlockState);
         enchantData = new _DataType_EnchantData();
+        this.blockPos = pPos;
         this.data = new ContainerData() {
             @Override
             public int get(int i) {
                 return switch (i){
                     case 0 -> BlockEntity_Index.this.progress;
                     case 1 -> BlockEntity_Index.this.maxProgress;
+                    case 2 -> BlockEntity_Index.this.blockPos.getX();
+                    case 3 -> BlockEntity_Index.this.blockPos.getY();
+                    case 4 -> BlockEntity_Index.this.blockPos.getZ();
                     default -> 0;
                 };
             }
@@ -74,7 +104,7 @@ public class BlockEntity_Index extends BlockEntity implements MenuProvider {
 
             @Override
             public int getCount() {
-                return 2;
+                return 5;
             }
         };
     }
@@ -113,7 +143,7 @@ public class BlockEntity_Index extends BlockEntity implements MenuProvider {
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
+    public AbstractContainerMenu createMenu(int i, @NotNull Inventory inventory, @NotNull Player player) {
         this.player = player;
         return new Screen_IndexMenu(i,inventory,this,this.data);
     }
@@ -152,16 +182,38 @@ public class BlockEntity_Index extends BlockEntity implements MenuProvider {
     }
 
     private void outPutItem() {
-        ItemStack inItem = this.itemStackHandler.getStackInSlot(SLOT_INPUT_ITEM);
-        if (!(inItem.getEnchantmentTags().isEmpty()) && this.itemStackHandler.getStackInSlot(SLOT_OUTPUT) == ItemStack.EMPTY){
+        ItemStack inItem = getSlotItem(getInputSlot());
+        if (inItem.isEmpty()){
+            return;
+        }
+        ItemStack lOutItem = getSlotItem(getOutputSlot());
+        if (inItem.getItem() == Items.ENCHANTED_BOOK && (lOutItem == ItemStack.EMPTY || lOutItem.getItem() == Items.BOOK)){
+            if (lOutItem.getItem() == Items.BOOK){
+                if (lOutItem.getCount() >= lOutItem.getMaxStackSize()){
+                    return;
+                }
+            }
+            CompoundTag lEnchantBook = inItem.getTag();
+            ListTag lEnchant;
+            System.out.println(lEnchantBook);
+            if (lEnchantBook != null) {
+                lEnchant = lEnchantBook.getList("StoredEnchantments",Tag.TAG_COMPOUND);
+                for(int i = 0; i < lEnchant.size(); ++i) {
+                    CompoundTag lCompoundtag = lEnchant.getCompound(i);
+                    enchantData.addEnchant(lCompoundtag.getString("id"),lCompoundtag.getInt("lvl"));
+                }
+                this.itemStackHandler.extractItem(getInputSlot(), 1, false);
+                this.itemStackHandler.setStackInSlot(getOutputSlot(), new ItemStack(Items.BOOK, lOutItem.getCount()+1));
+            }
+        }else if (!(inItem.getEnchantmentTags().isEmpty()) && lOutItem == ItemStack.EMPTY) {
             ItemStack in = inItem.copy();
             enchantData.addToEnchantData(inItem);
-            this.itemStackHandler.extractItem(SLOT_INPUT_ITEM,1,false);
+            this.itemStackHandler.extractItem(getInputSlot(), 1, false);
             in.getEnchantmentTags().clear();
-            this.itemStackHandler.setStackInSlot(SLOT_OUTPUT,new ItemStack(in.getItem(),1));
-            //saveAdditional(this.getPersistentData());
-            Net_Index_Core.sendToPlayer(new Packet_Index_ServerToClient(getUpdateTag()), (ServerPlayer) this.player);
+            this.itemStackHandler.setStackInSlot(getOutputSlot(), new ItemStack(in.getItem(), 1));
+
         }
+        Net_Index_Core.sendToPlayer(new Packet_Index_ServerToClient(getUpdateTag()), (ServerPlayer) this.player);
     }
 
     private boolean isDone() {
@@ -173,29 +225,24 @@ public class BlockEntity_Index extends BlockEntity implements MenuProvider {
     }
 
     private boolean checkItem(){
-        ItemStack in = this.itemStackHandler.getStackInSlot(SLOT_INPUT_ITEM);
+        ItemStack in = getSlotItem(getInputSlot());
         if (in == ItemStack.EMPTY){
             return false;
         }
-        if (TYPE){
-            return !in.getEnchantmentTags().isEmpty();
+        if (isInMode()){
+            if (getSlotItem(getOutputSlot()) != ItemStack.EMPTY){
+                return in.getItem() == Items.ENCHANTED_BOOK && getSlotItem(getOutputSlot()).getItem() == Items.BOOK;
+            }
+            return !in.getEnchantmentTags().isEmpty() || in.getItem() == Items.ENCHANTED_BOOK;
+        }else {
+            return in.getEnchantmentTags().isEmpty();
         }
-        return this.itemStackHandler.getStackInSlot(SLOT_OUTPUT) == ItemStack.EMPTY;
     }
     public ItemStack getSlotItem(int ind){
         return this.itemStackHandler.getStackInSlot(ind);
     }
     public HashMap<Enchantment,_DataType_StringIntInt> getSaveEnchants(){
         return enchantData.getEnchantData();
-    }
-
-    public void setTYPE(boolean TYPE) {
-        this.TYPE = TYPE;
-    }
-
-    @Override
-    public void setChanged() {
-        super.setChanged();
     }
 
     @Override
@@ -214,5 +261,30 @@ public class BlockEntity_Index extends BlockEntity implements MenuProvider {
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    public void handlePacket(CompoundTag msg){
+        HashMap<Enchantment, Integer> lSelectEnchants = AM_EnchantHelp.CompoundTagToEnchants(msg);
+        ItemStack lItem = getSlotItem(getInputSlot()).copy();
+        if (lItem != ItemStack.EMPTY && (lItem.getEnchantmentTags().isEmpty() || lItem.getItem() == Items.BOOK)){
+            if (getSlotItem(getOutputSlot()).isEmpty()){
+                if (lItem.getItem() == Items.BOOK){
+                    lItem = new ItemStack(Items.ENCHANTED_BOOK);
+                }
+                ItemStack finalLItem = lItem.copy();
+                lSelectEnchants.forEach((enchantment, integer) -> {
+                    if (enchantment.canEnchant(finalLItem) || finalLItem.getItem()==Items.ENCHANTED_BOOK){
+                        int lLvl = Math.min(integer, enchantData.getLvl(enchantment));
+                        if (enchantData.dimXp(enchantment,lLvl)){
+                            finalLItem.enchant(enchantment,lLvl);
+                        }
+                    }
+                });
+                itemStackHandler.extractItem(getInputSlot(),1,false);
+
+                itemStackHandler.setStackInSlot(getOutputSlot(),finalLItem);
+                Net_Index_Core.sendToPlayer(new Packet_Index_ServerToClient(getUpdateTag()), (ServerPlayer) this.player);
+            }
+        }
     }
 }
