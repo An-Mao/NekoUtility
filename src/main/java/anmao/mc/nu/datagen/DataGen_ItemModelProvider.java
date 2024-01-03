@@ -16,7 +16,7 @@ public class DataGen_ItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-
+        //
     }
     private ItemModelBuilder simpleItem(RegistryObject<Item> item){
         return withExistingParent(item.getId().getPath(),new ResourceLocation("item/generated")).texture("layer0",new ResourceLocation(NU.MOD_ID,"item/"+item.getId().getPath()));

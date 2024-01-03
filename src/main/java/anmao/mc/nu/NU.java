@@ -3,6 +3,7 @@ package anmao.mc.nu;
 import anmao.mc.nu.block.Blocks;
 import anmao.mc.nu.block.entity.BlockEntities;
 import anmao.mc.nu.event.Event_All;
+import anmao.mc.nu.item.CreativeTabs_NekoUtility;
 import anmao.mc.nu.item.Items;
 import anmao.mc.nu.network.index.Net_Index_Core;
 import anmao.mc.nu.screen.Screen_IndexMenu;
@@ -49,6 +50,7 @@ public class NU
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::commonSetup);
+        CreativeTabs_NekoUtility.reg(modEventBus);
         Items.register(modEventBus);
         Blocks.reg(modEventBus);
         BlockEntities.reg(modEventBus);

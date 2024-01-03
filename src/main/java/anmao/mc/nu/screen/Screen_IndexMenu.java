@@ -1,8 +1,10 @@
 package anmao.mc.nu.screen;
 
 import anmao.mc.nu.NU;
+import anmao.mc.nu.amlib.AM_InventoryHelp;
 import anmao.mc.nu.amlib.datatype._DataType_EnchantData;
 import anmao.mc.nu.amlib.datatype._DataType_StringIntInt;
+import anmao.mc.nu.amlib.entity.AM_EntityHelp;
 import anmao.mc.nu.block.Blocks;
 import anmao.mc.nu.block.entity.BlockEntity_Index;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,6 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.SlotItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
@@ -25,7 +28,7 @@ public class Screen_IndexMenu extends AbstractContainerMenu {
     private final Level level;
     private final ContainerData data;
     public Screen_IndexMenu(int pContainerId, Inventory inventory , FriendlyByteBuf ex) {
-        this(pContainerId,inventory,inventory.player.level().getBlockEntity(ex.readBlockPos()),new SimpleContainerData(5));
+        this(pContainerId,inventory, AM_EntityHelp.getBlockEntity(inventory.player,ex.readBlockPos()),new SimpleContainerData(5));
     }
     public Screen_IndexMenu(int cid, Inventory inv, BlockEntity ent,ContainerData dat){
         super(Screen_MenuTypes.INDEX_MENU.get(), cid);
@@ -53,7 +56,7 @@ public class Screen_IndexMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public void slotsChanged(Container pContainer) {
+    public void slotsChanged(@NotNull Container pContainer) {
         super.slotsChanged(pContainer);
     }
 
@@ -75,27 +78,19 @@ public class Screen_IndexMenu extends AbstractContainerMenu {
     public int getZ(){
         return data.get(4);
     }
-    private static final int HOT_BAR_SLOT_COUNT = 9;
-    private static final int PLAYER_INVENTORY_ROW_COUNT = 3;
-    private static final int PLAYER_INVENTORY_COLUMN_COUNT = 9;
-    private static final int PLAYER_INVENTORY_SLOT_COUNT = PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT;
-    private static final int VANILLA_SLOT_COUNT = HOT_BAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
-    private static final int VANILLA_FIRST_SLOT_INDEX = 0;
 
-    private static final int INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
-    private static final int INVENTORY_SLOT_COUNT = 2;
     @Override
-    public ItemStack quickMoveStack(Player player, int ind) {
+    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int ind) {
         Slot sourceSlot = slots.get(ind);
         if (!sourceSlot.hasItem()) return ItemStack.EMPTY;
         ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
-        if (ind < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT){
-            if (!moveItemStackTo(sourceStack,INVENTORY_FIRST_SLOT_INDEX,INVENTORY_FIRST_SLOT_INDEX+INVENTORY_SLOT_COUNT,false)){
+        if (ind < AM_InventoryHelp.VANILLA_FIRST_SLOT_INDEX + AM_InventoryHelp.VANILLA_SLOT_COUNT){
+            if (!moveItemStackTo(sourceStack,AM_InventoryHelp.INVENTORY_FIRST_SLOT_INDEX,AM_InventoryHelp.INVENTORY_FIRST_SLOT_INDEX+AM_InventoryHelp.INVENTORY_SLOT_COUNT,false)){
                 return ItemStack.EMPTY;
             }
-        }else if (ind < INVENTORY_FIRST_SLOT_INDEX+INVENTORY_SLOT_COUNT){
-            if (!moveItemStackTo(sourceStack,VANILLA_FIRST_SLOT_INDEX,VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT,false)){
+        }else if (ind < AM_InventoryHelp.INVENTORY_FIRST_SLOT_INDEX+AM_InventoryHelp.INVENTORY_SLOT_COUNT){
+            if (!moveItemStackTo(sourceStack,AM_InventoryHelp.VANILLA_FIRST_SLOT_INDEX,AM_InventoryHelp.VANILLA_FIRST_SLOT_INDEX + AM_InventoryHelp.VANILLA_SLOT_COUNT,false)){
                 return ItemStack.EMPTY;
             }
         }else {

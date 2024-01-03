@@ -16,7 +16,9 @@ public class DataGen_BlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        simpleBlock(Blocks.INDEX.get(), new ModelFile.UncheckedModelFile(modLoc("block/index")));
+        //simpleBlock(Blocks.INDEX.get(), new ModelFile.UncheckedModelFile(modLoc("block/index")));
+        simpleBlockWithItem(Blocks.INDEX.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/index")));
     }
 
 

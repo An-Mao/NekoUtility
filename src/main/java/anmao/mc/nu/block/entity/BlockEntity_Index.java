@@ -195,7 +195,6 @@ public class BlockEntity_Index extends BlockEntity implements MenuProvider {
             }
             CompoundTag lEnchantBook = inItem.getTag();
             ListTag lEnchant;
-            System.out.println(lEnchantBook);
             if (lEnchantBook != null) {
                 lEnchant = lEnchantBook.getList("StoredEnchantments",Tag.TAG_COMPOUND);
                 for(int i = 0; i < lEnchant.size(); ++i) {

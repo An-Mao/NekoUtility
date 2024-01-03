@@ -47,7 +47,6 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
     private HashMap<Enchantment,Integer> selectEnchants = new HashMap<>();
     public Screen_IndexScreen(Screen_IndexMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
-        System.out.println("-------Screen Start------");
         enchantData = menu.getEnchantData();
         breakEnchantData();
     }
@@ -113,7 +112,6 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
         lDat.putInt("be.x",menu.getX());
         lDat.putInt("be.y",menu.getY());
         lDat.putInt("be.z",menu.getZ());
-        //System.out.println("send"+lDat);
         Net_Index_Core.sendToServer(new Packet_Index_ClientToServer(lDat));
     }
     private void addROW(){
@@ -144,7 +142,7 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
     }
     private void getSelectEnchant(int button){
         Enchantment enchant = enchants.get(buttonIndex[button]);
-        System.out.println("enchant::"+enchant);
+        //System.out.println("enchant::"+enchant);
         //
         selectEnchants.put(enchant,selectEnchants.getOrDefault(enchant,0)+1);
     }
@@ -161,9 +159,7 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
 
     private void renderProgress(GuiGraphics guiGraphics){
         if (menu.isCrafting()){
-            //guiGraphics.blit(TEXTURE,x+185,y+44,308,0,menu.getScaleProgress(),17);
             guiGraphics.blit(TEXTURE,x+185,y+38,menu.getScaleProgress(),17,308,0,menu.getScaleProgress(),17,367,166);
-            //guiGraphics.blit(TEXTURE,x+185,y+44,308,0,100,17);
         }
     }
 
@@ -182,11 +178,9 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
         ItemStack inputItem = menu.getInputItem();
         for (int i = 0;i<enchantButton.length;i++){
             ImageButton button = enchantButton[i];
-            //System.out.println("eii::"+m);
             if (m < enchants.size()){
                 boolean show = true;
                 if (inputItem  != ItemStack.EMPTY && inputItem.getItem() != Items.BOOK){
-                    //System.out.println(":item:"+inputItem);
                     while (!(enchants.get(m).canEnchant(inputItem))){
                         m++;
                         if (m >= enchants.size()){
