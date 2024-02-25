@@ -2,11 +2,10 @@ package anmao.mc.nu.screen;
 
 import anmao.mc.nu.NU;
 import anmao.mc.nu.amlib.AM_InventoryHelp;
-import anmao.mc.nu.amlib.datatype._DataType_EnchantData;
 import anmao.mc.nu.amlib.datatype._DataType_StringIntInt;
 import anmao.mc.nu.amlib.entity.AM_EntityHelp;
 import anmao.mc.nu.block.Blocks;
-import anmao.mc.nu.block.entity.BlockEntity_Index;
+import anmao.mc.nu.block.entity.IndexBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,42 +16,32 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
-public class Screen_IndexMenu extends AbstractContainerMenu {
-    public final BlockEntity_Index index;
+public class IndexMenu extends AbstractContainerMenu {
+    public final IndexBlockEntity index;
     private final Level level;
     private final ContainerData data;
-    public Screen_IndexMenu(int pContainerId, Inventory inventory , FriendlyByteBuf ex) {
-        this(pContainerId,inventory, AM_EntityHelp.getBlockEntity(inventory.player,ex.readBlockPos()),new SimpleContainerData(5));
+    public IndexMenu(int pContainerId, Inventory inventory , FriendlyByteBuf ex) {
+        this(pContainerId,inventory, AM_EntityHelp.getBlockEntity(inventory.player,ex.readBlockPos()),new SimpleContainerData(6));
     }
-    public Screen_IndexMenu(int cid, Inventory inv, BlockEntity ent,ContainerData dat){
-        super(Screen_MenuTypes.INDEX_MENU.get(), cid);
-        /*
-        try {
-            Thread.dumpStack();
-        }catch (Exception e){
-            //
-        }
-         */
-        //System.out.println("Constructing Screen_IndexMenu instance: " + this.hashCode());
+    public IndexMenu(int cid, Inventory inv, BlockEntity ent, ContainerData dat){
+        super(MenuTypes.INDEX_MENU.get(), cid);
+        System.out.println(":-----:"+"->screen index menu::new");
         checkContainerSize(inv,2);
-        index = (BlockEntity_Index) ent;
+        index = (IndexBlockEntity) ent;
         this.level = inv.player.level();
         this.data = dat;
         addPlayerInventory(inv);
         addPlayerHotBar(inv);
         this.index.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
             this.addSlot(new SlotItemHandler(iItemHandler,0,86,37));
-            //this.addSlot(new SlotItemHandler(iItemHandler,1,112,37));
             this.addSlot(new SlotItemHandler(iItemHandler,1,170,37));
         });
         addDataSlots(dat);
-        //System.out.println(":dat:"+ getEnchantData());
     }
 
     @Override
@@ -63,6 +52,7 @@ public class Screen_IndexMenu extends AbstractContainerMenu {
     public boolean isCrafting(){
         return data.get(0) >0;
     }
+
     public int getScaleProgress(){
         int progress = data.get(0);
         int maxProgress = data.get(1);
@@ -79,6 +69,9 @@ public class Screen_IndexMenu extends AbstractContainerMenu {
         return data.get(4);
     }
 
+    public int getMP(){
+        return data.get(5);
+    }
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player player, int ind) {
         Slot sourceSlot = slots.get(ind);

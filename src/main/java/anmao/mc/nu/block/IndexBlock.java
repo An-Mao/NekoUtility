@@ -1,8 +1,7 @@
 package anmao.mc.nu.block;
 
-import anmao.mc.nu.NU;
 import anmao.mc.nu.block.entity.BlockEntities;
-import anmao.mc.nu.block.entity.BlockEntity_Index;
+import anmao.mc.nu.block.entity.IndexBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -23,9 +22,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
-public class Block_Index extends BaseEntityBlock {
+public class IndexBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0,0,0,16,16,16);
-    public Block_Index(Properties pProperties) {
+    public IndexBlock(Properties pProperties) {
         super(pProperties);
     }
 
@@ -43,8 +42,8 @@ public class Block_Index extends BaseEntityBlock {
     public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pMovedByPiston) {
         if (pState.getBlock() != pNewState.getBlock()){
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            if (blockEntity instanceof BlockEntity_Index){
-                ((BlockEntity_Index)blockEntity).drops();
+            if (blockEntity instanceof IndexBlockEntity){
+                ((IndexBlockEntity)blockEntity).drops();
             }
         }
         super.onRemove(pState, pLevel, pPos, pNewState, pMovedByPiston);
@@ -54,8 +53,8 @@ public class Block_Index extends BaseEntityBlock {
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide){
             BlockEntity entity = pLevel.getBlockEntity(pPos);
-            if (entity instanceof BlockEntity_Index){
-                NetworkHooks.openScreen(((ServerPlayer) pPlayer),(BlockEntity_Index)entity,pPos);
+            if (entity instanceof IndexBlockEntity){
+                NetworkHooks.openScreen(((ServerPlayer) pPlayer),(IndexBlockEntity)entity,pPos);
             }else {
                 throw new IllegalStateException("Missing");
             }
@@ -67,7 +66,7 @@ public class Block_Index extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return new BlockEntity_Index(blockPos,blockState);
+        return new IndexBlockEntity(blockPos,blockState);
     }
 
     @Nullable

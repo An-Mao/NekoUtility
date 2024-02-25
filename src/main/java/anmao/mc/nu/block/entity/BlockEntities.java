@@ -11,7 +11,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class BlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, NU.MOD_ID);
 
-    public static final RegistryObject<BlockEntityType<BlockEntity_Index>> INDEX = BLOCK_ENTITIES.register("index",()->BlockEntityType.Builder.of(BlockEntity_Index::new, Blocks.INDEX.get()).build(null));
+    public static final RegistryObject<BlockEntityType<IndexBlockEntity>> INDEX = BLOCK_ENTITIES.register("index",()->BlockEntityType.Builder.of(IndexBlockEntity::new, Blocks.INDEX.get()).build(null));
     public static void reg(IEventBus eventBus){
         BLOCK_ENTITIES.register(eventBus);
     }

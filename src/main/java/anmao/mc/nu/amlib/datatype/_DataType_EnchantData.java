@@ -50,6 +50,7 @@ public class _DataType_EnchantData {
         return dat;
     }
     public void addEnchant(String eid,int pLvl){
+        System.out.println("data:enchant data:add enchant:"+eid+"::"+pLvl);
         Enchantment lEnchant = AM_EnchantHelp.IdToEnchant(eid);
         _DataType_StringIntInt lEnchantData ;
         if (enchantData.containsKey(lEnchant)){

@@ -11,10 +11,10 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class CreativeTabs_NekoUtility {
     private static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, NU.MOD_ID);
-    public static final RegistryObject<CreativeModeTab> TAB = TABS.register("nu_tab",()-> CreativeModeTab.builder().icon(()->new ItemStack(Items.EXPLORATION_STICK.get()))
+    public static final RegistryObject<CreativeModeTab> TAB = TABS.register("nu_tab",()-> CreativeModeTab.builder().icon(()->new ItemStack(Items.INDEX.get()))
             .title(Component.translatable("create_tab.nu_tab"))
             .displayItems((pParameters, pOutput) -> {
-                pOutput.accept(Items.EXPLORATION_STICK.get());
+                pOutput.accept(Items.INDEX.get());
             })
             .build());
 

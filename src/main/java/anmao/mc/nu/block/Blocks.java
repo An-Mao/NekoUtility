@@ -15,14 +15,14 @@ import java.util.function.Supplier;
 
 public class Blocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, NU.MOD_ID);
-    public static final RegistryObject<Block> INDEX = registryBlock("index",()->new Block_Index(BlockBehaviour.Properties.copy(net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK).noOcclusion()));
+    public static final RegistryObject<Block> INDEX = registryBlock("index",()->new IndexBlock(BlockBehaviour.Properties.copy(net.minecraft.world.level.block.Blocks.NETHERITE_BLOCK).noOcclusion()));
 
 
 
 
     private static <T extends Block> RegistryObject<T> registryBlock(String name, Supplier<T> block){
         RegistryObject<T> toReturn = BLOCKS.register(name,block);
-        registryBlockItem(name,toReturn);
+        //registryBlockItem(name,toReturn);
         return toReturn;
     }
 

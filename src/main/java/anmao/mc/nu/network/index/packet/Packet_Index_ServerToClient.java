@@ -1,7 +1,6 @@
 package anmao.mc.nu.network.index.packet;
 
-import anmao.mc.nu.block.entity.BlockEntity_Index;
-import anmao.mc.nu.screen.Screen_IndexScreen;
+import anmao.mc.nu.screen.IndexScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -28,7 +27,7 @@ public class Packet_Index_ServerToClient {
         context.enqueueWork(()->{
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () ->
                 () -> {
-                    if (Minecraft.getInstance().screen instanceof Screen_IndexScreen screen) {
+                    if (Minecraft.getInstance().screen instanceof IndexScreen screen) {
                         screen.handlePacket(index);
                     }
                 });

@@ -2,7 +2,6 @@ package anmao.mc.nu.screen;
 
 import anmao.mc.nu.NU;
 import anmao.mc.nu.amlib.AM_EnchantHelp;
-import anmao.mc.nu.amlib.datatype._DataType_EnchantData;
 import anmao.mc.nu.amlib.datatype._DataType_StringIntInt;
 import anmao.mc.nu.network.index.Net_Index_Core;
 import anmao.mc.nu.network.index.packet.Packet_Index_ClientToServer;
@@ -24,15 +23,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 
-public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu> {
+public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
     private ImageButton[] enchantButton = new ImageButton[7];
     private int x,y;
     private final Font font = Minecraft.getInstance().font;
@@ -45,8 +41,9 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
 
     private ImageButton Button_Left,Button_right,Button_Mode,Button_EnchantItem;
     private HashMap<Enchantment,Integer> selectEnchants = new HashMap<>();
-    public Screen_IndexScreen(Screen_IndexMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
+    public IndexScreen(IndexMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
+        System.out.println("::rrrr::"+"6789");
         enchantData = menu.getEnchantData();
         breakEnchantData();
     }
@@ -155,6 +152,7 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
 
         guiGraphics.blit(TEXTURE,x,y,imageWidth,imageHeight,0,0,imageWidth,imageHeight,367,imageHeight);
         renderProgress(guiGraphics);
+        renderMP(guiGraphics);
     }
 
     private void renderProgress(GuiGraphics guiGraphics){
@@ -162,7 +160,12 @@ public class Screen_IndexScreen extends AbstractContainerScreen<Screen_IndexMenu
             guiGraphics.blit(TEXTURE,x+185,y+38,menu.getScaleProgress(),17,308,0,menu.getScaleProgress(),17,367,166);
         }
     }
+    private void renderMP(GuiGraphics guiGraphics){
+        System.out.println("--------------render mp--------------");
 
+        guiGraphics.drawString(Minecraft.getInstance().font,"MP:"+menu.getMP(),x+100,y+38,0x669900);
+
+    }
     @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         renderBackground(pGuiGraphics);

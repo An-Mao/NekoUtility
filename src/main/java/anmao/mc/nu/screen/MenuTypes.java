@@ -10,9 +10,9 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-public class Screen_MenuTypes {
+public class MenuTypes {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, NU.MOD_ID);
-    public static final RegistryObject<MenuType<Screen_IndexMenu>> INDEX_MENU = registryMenuType("index_menu",Screen_IndexMenu::new);
+    public static final RegistryObject<MenuType<IndexMenu>> INDEX_MENU = registryMenuType("index_menu", IndexMenu::new);
     private static <T extends AbstractContainerMenu>RegistryObject<MenuType<T>> registryMenuType(String name, IContainerFactory<T> factory){
         return MENUS.register(name,()-> IForgeMenuType.create(factory));
     }

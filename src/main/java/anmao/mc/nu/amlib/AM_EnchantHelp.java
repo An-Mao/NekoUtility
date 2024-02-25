@@ -1,20 +1,40 @@
 package anmao.mc.nu.amlib;
 
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class AM_EnchantHelp {
     public static final String ENCHANT_ID = "eid";
     public static final String ENCHANT_Lvl = "lvl";
     public static final String ENCHANT_SAVE_KEY = "am.enchants";
+    public static Registry<Enchantment> getEnchantReg(){
+        return BuiltInRegistries.ENCHANTMENT;
+    }
+    public static Optional<Enchantment> getEnchantRegWithOptional(ResourceLocation pRes){
+        return getEnchantReg().getOptional(pRes);
+    }
+    public static Optional<Enchantment> getEnchantRegWithOptional(String id){
+        return getEnchantRegWithOptional(ResourceLocation.tryParse(id));
+    }
+    public static Optional<Enchantment> getEnchantRegWithOptionalEid(CompoundTag pTag){
+        return getEnchantRegWithOptional(pTag.getString(ENCHANT_ID));
+    }
+    public static Optional<Enchantment> getEnchantRegWithOptionalVid(CompoundTag pTag){
+        return getEnchantRegWithOptional(pTag.getString("id"));
+    }
+
     public static ResourceLocation getRegEnchantId(Enchantment enchantment){
         return EnchantmentHelper.getEnchantmentId(enchantment);
     }
@@ -54,18 +74,30 @@ public class AM_EnchantHelp {
         return IdToEnchant(tag.getString(ENCHANT_ID));
     }
     public static Enchantment IdToEnchant(String s){
-        ResourceLocation enchantmentId = ResourceLocation.tryParse(s);
-        return BuiltInRegistries.ENCHANTMENT.getOptional(enchantmentId)
-                .orElseThrow(() -> new RuntimeException("Enchantment not found for ID: " + enchantmentId));
+        return getEnchantRegWithOptional(s).orElseThrow(() -> new RuntimeException("Enchantment not found for ID: " + s));
     }
     public static Enchantment VanillaCompoundTagToEnchant(CompoundTag pCompoundTag){
         AtomicReference<Enchantment> enchant = null;
-        BuiltInRegistries.ENCHANTMENT.getOptional(ResourceLocation.tryParse(pCompoundTag.getString(ENCHANT_ID))).ifPresent((enchantment) -> {
-            enchant.set(enchantment);
-        });
+        getEnchantRegWithOptionalEid(pCompoundTag).ifPresent((enchantment) -> enchant.set(enchantment));
         return enchant.get();
     }
     public static int getEnchantmentLevel(CompoundTag pCompoundTag) {
         return Math.max(0,pCompoundTag.getInt(ENCHANT_Lvl));
+    }
+    public static ListTag getEnchantBookEnchants(ItemStack pItem){
+        CompoundTag lEnchantBook = pItem.getTag();
+        if (lEnchantBook != null) {
+            return lEnchantBook.getList("StoredEnchantments", Tag.TAG_COMPOUND);
+        }
+        return null;
+    }
+    public static boolean isEnchantItem(ItemStack pItem){
+        if (pItem == ItemStack.EMPTY){
+            return false;
+        }
+        if (pItem.getItem() == Items.ENCHANTED_BOOK){
+            return true;
+        }
+        return !pItem.getEnchantmentTags().isEmpty();
     }
 }
