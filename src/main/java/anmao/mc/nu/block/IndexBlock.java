@@ -23,7 +23,7 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
 
 public class IndexBlock extends BaseEntityBlock {
-    public static final VoxelShape SHAPE = Block.box(0,0,0,16,16,16);
+    public static final VoxelShape SHAPE = Block.box(0,0,0,16,14,16);
     public IndexBlock(Properties pProperties) {
         super(pProperties);
     }

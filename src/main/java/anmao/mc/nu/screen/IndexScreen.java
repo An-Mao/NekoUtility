@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -29,10 +30,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
+    private int textureWidth = 367 , textureHeight = 166;
     private ImageButton[] enchantButton = new ImageButton[7];
     private int x,y;
     private final Font font = Minecraft.getInstance().font;
-    private static final ResourceLocation TEXTURE = new ResourceLocation(NU.MOD_ID,"textures/gui/index.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(NU.MOD_ID,"textures/gui/index_gui.png");
     private HashMap<Enchantment, _DataType_StringIntInt> enchantData;
     private final ArrayList<Enchantment> enchants = new ArrayList<>();
     private final ArrayList<_DataType_StringIntInt> enchantInfo = new ArrayList<>();
@@ -41,9 +43,9 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
 
     private ImageButton Button_Left,Button_right,Button_Mode,Button_EnchantItem;
     private HashMap<Enchantment,Integer> selectEnchants = new HashMap<>();
+    private int needMp = 0;
     public IndexScreen(IndexMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
-        System.out.println("::rrrr::"+"6789");
         enchantData = menu.getEnchantData();
         breakEnchantData();
     }
@@ -66,6 +68,9 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
         y = (height - imageHeight)/2;
         addMustButton();
     }
+    private ImageButton creatImageButton(int x, int y, int width, int height, int startX, int startY, int yDiffTex, ResourceLocation res, Button.OnPress onPress,Component component){
+        return new ImageButton(x,y,width,height,startX,startY,yDiffTex,res,textureWidth,textureHeight,onPress,component);
+    }
     private void addMustButton(){
         addEnchantButton();
         addPageButton();
@@ -73,31 +78,17 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
         addEnchantItemButton();
     }
     private void addPageButton(){
-        Button_Left = new ImageButton(x+103,y+64,
-                12,
-                19,
-                279,
-                41,
-                0,TEXTURE,
-                367,
-                166,(pButton -> subROW()),Component.empty());
+        Button_Left = creatImageButton(x+103,y+64,12, 19, 279, 41, 0,TEXTURE,(pButton -> subROW()),Component.empty());
         this.addRenderableWidget(Button_Left);
-        Button_right = new ImageButton(x+155,y+64,
-                12,
-                19,
-                279,
-                22,
-                0,TEXTURE,
-                367,
-                166,(pButton -> addROW()),Component.empty());
+        Button_right = creatImageButton(x+155,y+64, 12, 19, 279, 22, 0,TEXTURE,(pButton -> addROW()),Component.empty());
         this.addRenderableWidget(Button_right);
     }
     private void addModeButton(){
-        Button_Mode = new ImageButton(x,y,12,12,200,100,0,TEXTURE,367,166,(pButton -> {}),Component.empty());
+        Button_Mode = creatImageButton(x,y,12,12,200,100,0,TEXTURE,(pButton -> {}),Component.empty());
         this.addRenderableWidget(Button_Mode);
     }
     private void addEnchantItemButton(){
-        Button_EnchantItem = new ImageButton(x+90,y+20,12,12,200,100,0,TEXTURE,367,166,(pButton -> sendSelectEnchant()),Component.empty());
+        Button_EnchantItem = creatImageButton(x+90,y+20,12,12,200,100,0,TEXTURE,(pButton -> sendSelectEnchant()),Component.empty());
         this.addRenderableWidget(Button_EnchantItem);
     }
     private void sendSelectEnchant(){
@@ -125,23 +116,15 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
         int ax = x + 5, ay = y + 19;
         for (int i = 0; i < enchantButton.length ;i++){
             int finalI = i;
-            enchantButton[i] = new ImageButton(ax,ay,
-                    88,
-                    18,
-                    279,
-                    61,
-                    0,TEXTURE,
-                    367,
-                    166,(pButton -> getSelectEnchant(finalI)),Component.empty());
+            enchantButton[i] = creatImageButton(ax,ay, 88, 18, 279, 61, 0,TEXTURE,(pButton -> getSelectEnchant(finalI)),Component.empty());
             this.addRenderableWidget(enchantButton[i] );
             ay += 20;
         }
     }
     private void getSelectEnchant(int button){
         Enchantment enchant = enchants.get(buttonIndex[button]);
-        //System.out.println("enchant::"+enchant);
-        //
         selectEnchants.put(enchant,selectEnchants.getOrDefault(enchant,0)+1);
+        needMp +=5;
     }
 
     @Override
@@ -150,7 +133,7 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
         RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
         RenderSystem.setShaderTexture(0,TEXTURE);
 
-        guiGraphics.blit(TEXTURE,x,y,imageWidth,imageHeight,0,0,imageWidth,imageHeight,367,imageHeight);
+        guiGraphics.blit(TEXTURE,x,y,imageWidth,imageHeight,0,0,imageWidth,imageHeight,367,166);
         renderProgress(guiGraphics);
         renderMP(guiGraphics);
     }
@@ -161,9 +144,8 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
         }
     }
     private void renderMP(GuiGraphics guiGraphics){
-        System.out.println("--------------render mp--------------");
-
         guiGraphics.drawString(Minecraft.getInstance().font,"MP:"+menu.getMP(),x+100,y+38,0x669900);
+        guiGraphics.drawString(Minecraft.getInstance().font,"Need MP:"+needMp,x+100,y+50,0x669900);
 
     }
     @Override

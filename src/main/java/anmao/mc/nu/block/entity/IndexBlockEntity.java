@@ -27,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -40,18 +41,25 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 
 public class IndexBlockEntity extends BlockEntity implements MenuProvider {
-    private final String aInventoryKey = "inventory", aEnchantDatKey="index.enchants",aProgressKey = "index.progress";
+    private final String inventorySaveKey = "inventory", enchantDatSaveKey ="index.enchants", progressSaveKey = "index.progress", mpSaveKey = "index.mp";
     private int progress = 0,maxProgress = 70,mp = 0;
     private final int aInputSlotIndex = 0, aOutputSlotIndex = 1;
-    private final ItemStackHandler itemStackHandler = new ItemStackHandler(2);
+    private final ItemStackHandler itemStackHandler = new ItemStackHandler(2){
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+            /*
+            if (level != null && !level.isClientSide) {
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+            }
+             */
+        }
+    };
     protected final ContainerData data;
     private final BlockPos blockPos;
     private Player player;
     private final _DataType_EnchantData enchantData;
     private LazyOptional<IItemHandler> lazyOptional = LazyOptional.empty();
-
-
-    //-------------------------------------------------------------------------------------------
     public IndexBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntities.INDEX.get(), pPos, pBlockState);
         enchantData = new _DataType_EnchantData();
@@ -142,34 +150,37 @@ public class IndexBlockEntity extends BlockEntity implements MenuProvider {
         return new IndexMenu(i,inventory,this,this.data);
     }
     @Override
-    protected void saveAdditional(CompoundTag pTag) {
-        pTag.put(aInventoryKey,itemStackHandler.serializeNBT());
-        pTag.putInt(aProgressKey,progress);
-        pTag.putInt("index.mp",mp);
-        pTag.put(aEnchantDatKey,enchantData.formatEnchants());
+    protected void saveAdditional(@NotNull CompoundTag pTag) {
         super.saveAdditional(pTag);
+        saveDat(pTag);
+    }
+    private CompoundTag saveDat(CompoundTag tag){
+        tag.put(enchantDatSaveKey,enchantData.formatEnchants());
+        tag.putInt(progressSaveKey,progress);
+        tag.putInt(mpSaveKey,mp);
+        tag.put(inventorySaveKey,itemStackHandler.serializeNBT());
+        return tag;
     }
     @Override
     public void load(@NotNull CompoundTag pTag) {
         super.load(pTag);
-        System.out.println("block entity:index:load:save tag"+pTag);
-        itemStackHandler.deserializeNBT(pTag.getCompound(aInventoryKey));
-        progress = pTag.getInt(aProgressKey);
-        mp = pTag.getInt("index.mp");
-        enchantData.loadEnchants(pTag.getList(aEnchantDatKey, Tag.TAG_COMPOUND));
+        loadDat(pTag);
+    }
+    private void loadDat(CompoundTag tag){
+        enchantData.loadEnchants(tag.getList(enchantDatSaveKey, Tag.TAG_COMPOUND));
+        progress = tag.getInt(progressSaveKey);
+        mp = tag.getInt(mpSaveKey);
+        itemStackHandler.deserializeNBT(tag.getCompound(inventorySaveKey));
     }
     @Override
     public @NotNull CompoundTag getUpdateTag() {
-        System.out.println("blockEntity:index:updateTag");
         CompoundTag dat = new CompoundTag();
-        dat.put(aEnchantDatKey,enchantData.formatEnchants());
+        dat.put(enchantDatSaveKey,enchantData.formatEnchants());
         super.getUpdateTag();
         return dat;
     }
-
     @Override
     public void handleUpdateTag(CompoundTag tag) {
-        System.out.println("block entity:index:handle update tag:"+tag);
         load(tag);
     }
 
@@ -209,7 +220,6 @@ public class IndexBlockEntity extends BlockEntity implements MenuProvider {
         return false;
     }
     private void outPutItem() {
-        System.out.println("block entity:index:out put item:level"+level);
         ItemStack inItem = getInputItem();
         if (inItem.isEmpty()){
             return;
@@ -222,7 +232,6 @@ public class IndexBlockEntity extends BlockEntity implements MenuProvider {
                     return;
                 }
             }
-            //CompoundTag lEnchantBook = inItem.getTag();
             ListTag lEnchant = AM_EnchantHelp.getEnchantBookEnchants(inItem);
             if (lEnchant != null) {
                 for (int i = 0; i < lEnchant.size(); ++i) {
@@ -255,40 +264,50 @@ public class IndexBlockEntity extends BlockEntity implements MenuProvider {
         return !in.getEnchantmentTags().isEmpty() || in.getItem() == Items.ENCHANTED_BOOK;
     }
     public HashMap<Enchantment,_DataType_StringIntInt> getSaveEnchants(){
-        System.out.println("block entity:index:get save enchant:level"+level);
         return enchantData.getEnchantData();
     }
-    //------------------------------------------------------------------------------------------------------------------
     public void handlePacket(CompoundTag msg){
-        System.out.println("block entity:index:net:level"+level);
-        HashMap<Enchantment, Integer> lSelectEnchants = AM_EnchantHelp.CompoundTagToEnchants(msg);
-        ItemStack lItem = getInputItem().copy();
-        if (lItem != ItemStack.EMPTY && (lItem.getEnchantmentTags().isEmpty() || lItem.getItem() == Items.BOOK)){
+        ItemStack newItem = getInputItem().copy();
+        if (newItem != ItemStack.EMPTY && (newItem.getEnchantmentTags().isEmpty() || newItem.getItem() == Items.BOOK)){
+
             if (getOutputItem().isEmpty()){
-                if (lItem.getItem() == Items.BOOK){
-                    lItem = new ItemStack(Items.ENCHANTED_BOOK);
+
+
+                HashMap<Enchantment, Integer> selectEnchants = AM_EnchantHelp.CompoundTagToEnchants(msg);
+                int[] needMp = {0};
+                selectEnchants.values().forEach(integer -> needMp[0] += integer * 5);
+                if (needMp[0] > mp){
+                    return;
                 }
-                ItemStack finalLItem = lItem.copy();
-                lSelectEnchants.forEach((enchantment, integer) -> {
-                    if (enchantment.canEnchant(finalLItem) || finalLItem.getItem()==Items.ENCHANTED_BOOK){
-                        int lLvl = Math.min(integer, enchantData.getLvl(enchantment));
-                        if (enchantData.dimXp(enchantment,lLvl)){
-                            finalLItem.enchant(enchantment,lLvl);
+                mp -= needMp[0];
+                if (newItem.getItem() == Items.BOOK){
+                    newItem = new ItemStack(Items.ENCHANTED_BOOK);
+                }
+                ItemStack finalItem = newItem.copy();
+                selectEnchants.forEach((enchantment, integer) -> {
+                    if (enchantment.canEnchant(finalItem) || finalItem.getItem()==Items.ENCHANTED_BOOK){
+                        int lvl = Math.min(integer, enchantData.getLvl(enchantment));
+                        if (enchantData.dimXp(enchantment,lvl)){
+                            finalItem.enchant(enchantment,lvl);
                         }
                     }
                 });
                 itemStackHandler.extractItem(aInputSlotIndex,1,false);
-                itemStackHandler.setStackInSlot(aOutputSlotIndex,finalLItem);
+                itemStackHandler.setStackInSlot(aOutputSlotIndex,finalItem);
                 updateToClient();
             }
         }
     }
     private void updateToClient(){
+        setChanged();
         if (level != null){
-            level.sendBlockUpdated(getBlockPos(),getBlockState(),getBlockState(),2);
+            level.sendBlockUpdated(getBlockPos(),getBlockState(),getBlockState(),3);
         }
         if (this.player != null) {
             Net_Index_Core.sendToPlayer(new Packet_Index_ServerToClient(getUpdateTag()), (ServerPlayer) this.player);
         }
+    }
+    public boolean shouldRenderFace(Direction pFace) {
+        return Block.shouldRenderFace(this.getBlockState(), this.level, this.getBlockPos(), pFace, this.getBlockPos().relative(pFace));
     }
 }

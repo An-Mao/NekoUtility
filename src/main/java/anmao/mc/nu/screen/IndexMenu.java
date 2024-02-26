@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class IndexMenu extends AbstractContainerMenu {
+    private static final int invSlotX = 58;
     public final IndexBlockEntity index;
     private final Level level;
     private final ContainerData data;
@@ -30,7 +31,6 @@ public class IndexMenu extends AbstractContainerMenu {
     }
     public IndexMenu(int cid, Inventory inv, BlockEntity ent, ContainerData dat){
         super(MenuTypes.INDEX_MENU.get(), cid);
-        System.out.println(":-----:"+"->screen index menu::new");
         checkContainerSize(inv,2);
         index = (IndexBlockEntity) ent;
         this.level = inv.player.level();
@@ -106,13 +106,13 @@ public class IndexMenu extends AbstractContainerMenu {
     private void addPlayerInventory(Inventory playerInv){
         for (int i= 0; i<3;i++){
             for (int m = 0;m<9;m++){
-                this.addSlot(new Slot(playerInv,m+i*9+9,58+m*18,84+i*18));
+                this.addSlot(new Slot(playerInv,m+i*9+9,invSlotX+m*18,84+i*18));
             }
         }
     }
     private void addPlayerHotBar(Inventory inventory){
         for (int i = 0;i<9;i++){
-            this.addSlot(new Slot(inventory,i,58+i*18,142));
+            this.addSlot(new Slot(inventory,i,invSlotX+i*18,142));
         }
     }
 
