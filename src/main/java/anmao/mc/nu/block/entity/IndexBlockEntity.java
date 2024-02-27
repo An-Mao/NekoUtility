@@ -1,10 +1,10 @@
 package anmao.mc.nu.block.entity;
 
 import anmao.mc.nu.amlib.AM_EnchantHelp;
-import anmao.mc.nu.amlib.datatype._DataType_EnchantData;
-import anmao.mc.nu.amlib.datatype._DataType_StringIntInt;
-import anmao.mc.nu.network.index.Net_Index_Core;
-import anmao.mc.nu.network.index.packet.Packet_Index_ServerToClient;
+import anmao.mc.nu.datatype.EnchantDataType;
+import anmao.mc.nu.datatype._DataType_StringIntInt;
+import anmao.mc.nu.network.index.NetCore;
+import anmao.mc.nu.network.index.packet.IndexPacketSTC;
 import anmao.mc.nu.screen.IndexMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -58,11 +58,11 @@ public class IndexBlockEntity extends BlockEntity implements MenuProvider {
     protected final ContainerData data;
     private final BlockPos blockPos;
     private Player player;
-    private final _DataType_EnchantData enchantData;
+    private final EnchantDataType enchantData;
     private LazyOptional<IItemHandler> lazyOptional = LazyOptional.empty();
     public IndexBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntities.INDEX.get(), pPos, pBlockState);
-        enchantData = new _DataType_EnchantData();
+        enchantData = new EnchantDataType();
         this.blockPos = pPos;
         this.data = new ContainerData() {
             @Override
@@ -220,7 +220,7 @@ public class IndexBlockEntity extends BlockEntity implements MenuProvider {
         return false;
     }
     private void outPutItem() {
-        ItemStack inItem = getInputItem();
+        ItemStack inItem = getInputItem().copy();
         if (inItem.isEmpty()){
             return;
         }
@@ -242,6 +242,8 @@ public class IndexBlockEntity extends BlockEntity implements MenuProvider {
                 this.itemStackHandler.setStackInSlot(aOutputSlotIndex, new ItemStack(Items.BOOK, lOutItem.getCount() + 1));
             }else {
                 System.out.println("error enchant book");
+                this.itemStackHandler.extractItem(aInputSlotIndex, 1, false);
+                this.itemStackHandler.setStackInSlot(aOutputSlotIndex,inItem);
             }
         }else if (!(inItem.getEnchantmentTags().isEmpty()) && lOutItem == ItemStack.EMPTY) {
             ItemStack in = inItem.copy();
@@ -275,11 +277,6 @@ public class IndexBlockEntity extends BlockEntity implements MenuProvider {
 
                 HashMap<Enchantment, Integer> selectEnchants = AM_EnchantHelp.CompoundTagToEnchants(msg);
                 int[] needMp = {0};
-                selectEnchants.values().forEach(integer -> needMp[0] += integer * 5);
-                if (needMp[0] > mp){
-                    return;
-                }
-                mp -= needMp[0];
                 if (newItem.getItem() == Items.BOOK){
                     newItem = new ItemStack(Items.ENCHANTED_BOOK);
                 }
@@ -289,9 +286,14 @@ public class IndexBlockEntity extends BlockEntity implements MenuProvider {
                         int lvl = Math.min(integer, enchantData.getLvl(enchantment));
                         if (enchantData.dimXp(enchantment,lvl)){
                             finalItem.enchant(enchantment,lvl);
+                            needMp[0] += lvl * 5;
                         }
                     }
                 });
+                if (needMp[0] > mp){
+                    return;
+                }
+                mp -= needMp[0];
                 itemStackHandler.extractItem(aInputSlotIndex,1,false);
                 itemStackHandler.setStackInSlot(aOutputSlotIndex,finalItem);
                 updateToClient();
@@ -304,7 +306,7 @@ public class IndexBlockEntity extends BlockEntity implements MenuProvider {
             level.sendBlockUpdated(getBlockPos(),getBlockState(),getBlockState(),3);
         }
         if (this.player != null) {
-            Net_Index_Core.sendToPlayer(new Packet_Index_ServerToClient(getUpdateTag()), (ServerPlayer) this.player);
+            NetCore.sendToPlayer(new IndexPacketSTC(getUpdateTag()), (ServerPlayer) this.player);
         }
     }
     public boolean shouldRenderFace(Direction pFace) {

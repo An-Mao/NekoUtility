@@ -121,6 +121,9 @@ repositories {
     // flatDir {
     //     dir 'libs'
     // }
+    flatDir {
+        dirs 'lib'
+    }
 }
 
 dependencies {
@@ -145,6 +148,7 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    implementation fg.deobf("anmao.mc:amlib-${minecraft_version}:${amlib_version}")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -158,6 +162,7 @@ tasks.named('processResources', ProcessResources).configure {
             loader_version_range: loader_version_range,
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
+            amlib_version: amlib_version,amlib_version_range: amlib_version_range,
     ]
     inputs.properties replaceProperties
 

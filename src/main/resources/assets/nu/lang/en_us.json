@@ -7,5 +7,6 @@
   "tooltip.nu.index.name": "Name:",
   "tooltip.nu.index.select": "Select:",
   "tooltip.nu.index.page": "Page:",
-  "create_tab.nu_tab": "Neko Utility"
+  "create_tab.nu_tab": "Neko Utility",
+  "tooltip.nu.index.need_mp": "Need MP:"
 }

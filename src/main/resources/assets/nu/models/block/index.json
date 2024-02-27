@@ -4,7 +4,7 @@
 		"1": "nu:block/index/index_shackles",
 		"2": "nu:block/index/index_bottom",
 		"3": "nu:block/index/index_top",
-		"particle": "nu:block/index/index_core"
+		"particle": "nu:block/index/index_bottom"
 	},
 	"elements": [
 		{

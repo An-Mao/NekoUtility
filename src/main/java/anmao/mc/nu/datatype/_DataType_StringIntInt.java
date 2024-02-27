@@ -1,4 +1,4 @@
-package anmao.mc.nu.amlib.datatype;
+package anmao.mc.nu.datatype;
 
 public class _DataType_StringIntInt {
     private String eid;

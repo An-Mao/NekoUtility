@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:redstone"
+    },
+    "B": {
+      "item": "minecraft:bookshelf"
+    },
+    "C": {
+      "item": "minecraft:nether_star"
+    },
+    "D": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "pattern": [
+    "ABA",
+    "ACA",
+    "DDD"
+  ],
+  "result": {
+    "item": "nu:index"
+  },
+  "show_notification": true
+}

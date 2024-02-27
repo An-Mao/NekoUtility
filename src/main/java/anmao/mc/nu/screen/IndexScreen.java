@@ -1,11 +1,14 @@
 package anmao.mc.nu.screen;
 
+import anmao.mc.amlib.color._ColorCDT;
+import anmao.mc.amlib.enchantment.EnchantmentHelper;
 import anmao.mc.nu.NU;
 import anmao.mc.nu.amlib.AM_EnchantHelp;
-import anmao.mc.nu.amlib.datatype._DataType_StringIntInt;
-import anmao.mc.nu.network.index.Net_Index_Core;
-import anmao.mc.nu.network.index.packet.Packet_Index_ClientToServer;
+import anmao.mc.nu.datatype._DataType_StringIntInt;
+import anmao.mc.nu.network.index.NetCore;
+import anmao.mc.nu.network.index.packet.IndexPacketCTS;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,25 +27,26 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
-    private int textureWidth = 367 , textureHeight = 166;
-    private ImageButton[] enchantButton = new ImageButton[7];
+    private static final ResourceLocation TEXTURE = new ResourceLocation(NU.MOD_ID,"textures/gui/index_gui.png");
+    private final int textureWidth = 367,textureHeight = 166;
+    private final ImageButton[] enchantButton = new ImageButton[7];
+    private ImageButton enchantItem;
     private int x,y;
     private final Font font = Minecraft.getInstance().font;
-    private static final ResourceLocation TEXTURE = new ResourceLocation(NU.MOD_ID,"textures/gui/index_gui.png");
     private HashMap<Enchantment, _DataType_StringIntInt> enchantData;
     private final ArrayList<Enchantment> enchants = new ArrayList<>();
     private final ArrayList<_DataType_StringIntInt> enchantInfo = new ArrayList<>();
     private int ROW = 0;
-    private int[] buttonIndex = new int[7];
+    private final int[] buttonIndex = new int[7];
 
-    private ImageButton Button_Left,Button_right,Button_Mode,Button_EnchantItem;
-    private HashMap<Enchantment,Integer> selectEnchants = new HashMap<>();
+    private final HashMap<Enchantment,Integer> selectEnchants = new HashMap<>();
     private int needMp = 0;
     public IndexScreen(IndexMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
@@ -74,22 +78,15 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
     private void addMustButton(){
         addEnchantButton();
         addPageButton();
-        addModeButton();
         addEnchantItemButton();
     }
     private void addPageButton(){
-        Button_Left = creatImageButton(x+103,y+64,12, 19, 279, 41, 0,TEXTURE,(pButton -> subROW()),Component.empty());
-        this.addRenderableWidget(Button_Left);
-        Button_right = creatImageButton(x+155,y+64, 12, 19, 279, 22, 0,TEXTURE,(pButton -> addROW()),Component.empty());
-        this.addRenderableWidget(Button_right);
-    }
-    private void addModeButton(){
-        Button_Mode = creatImageButton(x,y,12,12,200,100,0,TEXTURE,(pButton -> {}),Component.empty());
-        this.addRenderableWidget(Button_Mode);
+        this.addRenderableWidget(creatImageButton(x + 106, y + 42, 12, 19, 279, 22, 0, TEXTURE, (pButton -> subROW()), Component.empty()));
+        this.addRenderableWidget(creatImageButton(x + 136, y + 42, 12, 19, 279, 3, 0, TEXTURE, (pButton -> addROW()), Component.empty()));
     }
     private void addEnchantItemButton(){
-        Button_EnchantItem = creatImageButton(x+90,y+20,12,12,200,100,0,TEXTURE,(pButton -> sendSelectEnchant()),Component.empty());
-        this.addRenderableWidget(Button_EnchantItem);
+        enchantItem = creatImageButton(x + 180, y + 50, 16, 16, 279, 112, 0, TEXTURE, (pButton -> sendSelectEnchant()), Component.empty());
+        this.addRenderableWidget(enchantItem);
     }
     private void sendSelectEnchant(){
         if (selectEnchants.isEmpty()){
@@ -100,7 +97,7 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
         lDat.putInt("be.x",menu.getX());
         lDat.putInt("be.y",menu.getY());
         lDat.putInt("be.z",menu.getZ());
-        Net_Index_Core.sendToServer(new Packet_Index_ClientToServer(lDat));
+        NetCore.sendToServer(new IndexPacketCTS(lDat));
     }
     private void addROW(){
         if (ROW < enchants.size() / 7){
@@ -113,18 +110,24 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
         }
     }
     private void addEnchantButton(){
-        int ax = x + 5, ay = y + 19;
+        int ax = x + 7, ay = y + 19;
         for (int i = 0; i < enchantButton.length ;i++){
             int finalI = i;
-            enchantButton[i] = creatImageButton(ax,ay, 88, 18, 279, 61, 0,TEXTURE,(pButton -> getSelectEnchant(finalI)),Component.empty());
+            enchantButton[i] = creatImageButton(ax,ay, 88, 18, 279, 45, 0,TEXTURE,(pButton -> getSelectEnchant(finalI)),Component.empty());
             this.addRenderableWidget(enchantButton[i] );
             ay += 20;
         }
     }
     private void getSelectEnchant(int button){
-        Enchantment enchant = enchants.get(buttonIndex[button]);
-        selectEnchants.put(enchant,selectEnchants.getOrDefault(enchant,0)+1);
-        needMp +=5;
+        int i = buttonIndex[button];
+        if (i < enchants.size()) {
+            Enchantment enchant = enchants.get(i);
+            int lvl = selectEnchants.getOrDefault(enchant, 0);
+            if (lvl < enchantInfo.get(i).getMaxLvl()) {
+                selectEnchants.put(enchant, lvl + 1);
+                needMp += 5;
+            }
+        }
     }
 
     @Override
@@ -132,31 +135,33 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
         RenderSystem.setShaderTexture(0,TEXTURE);
-
-        guiGraphics.blit(TEXTURE,x,y,imageWidth,imageHeight,0,0,imageWidth,imageHeight,367,166);
+        guiGraphics.blit(TEXTURE,x,y,imageWidth,imageHeight,0,0,imageWidth,imageHeight,textureWidth,textureHeight);
         renderProgress(guiGraphics);
         renderMP(guiGraphics);
+        renderSeletEnchant(guiGraphics);
     }
-
+    private void renderSeletEnchant(GuiGraphics guiGraphics){
+        guiGraphics.renderItem(new ItemStack(Items.ENCHANTED_BOOK),x + 180, y + 50);
+    }
     private void renderProgress(GuiGraphics guiGraphics){
         if (menu.isCrafting()){
-            guiGraphics.blit(TEXTURE,x+185,y+38,menu.getScaleProgress(),17,308,0,menu.getScaleProgress(),17,367,166);
+            guiGraphics.blit(TEXTURE,x+185,y+38,menu.getScaleProgress(),17,279,66,menu.getScaleProgress(),17,textureWidth,textureHeight);
         }
     }
     private void renderMP(GuiGraphics guiGraphics){
-        guiGraphics.drawString(Minecraft.getInstance().font,"MP:"+menu.getMP(),x+100,y+38,0x669900);
-        guiGraphics.drawString(Minecraft.getInstance().font,"Need MP:"+needMp,x+100,y+50,0x669900);
+        guiGraphics.drawString(Minecraft.getInstance().font,"MP:"+menu.getMP(),x+106,y+18, _ColorCDT.black,false);
 
     }
     @Override
-    public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+    public void render(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         renderBackground(pGuiGraphics);
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         renderTooltip(pGuiGraphics,pMouseX,pMouseY);
         renderEnchantsButtonText(pGuiGraphics,pMouseX,pMouseY);
         pGuiGraphics.drawString(font,Component.translatable("tooltip.nu.index.save.all").append(String.valueOf(enchants.size())),x+25,y+5,0x336699);
-        pGuiGraphics.drawString(font,Component.translatable("tooltip.nu.index.select").append(String.valueOf(selectEnchants.size())),x+150,y+5,0x336699);
-        pGuiGraphics.drawString(font,Component.translatable("tooltip.nu.index.page").append(String.valueOf(ROW)),x+117,y+70,0x336699);
+        pGuiGraphics.drawString(font,Component.translatable("tooltip.nu.index.page"),x+106,y+33,_ColorCDT.black,false);
+        pGuiGraphics.drawString(font,Component.literal(String.valueOf(ROW)),x+119,y+48,_ColorCDT.black,false);
+        renderSelectEnchantTooltip(pGuiGraphics,pMouseX,pMouseY);
     }
     private void renderEnchantsButtonText(GuiGraphics guiGraphics, int pMouseX, int pMouseY){
         int m = ROW * 7;
@@ -181,9 +186,13 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
                         color = 0xff0000;
                     }
                     if (button.isHovered()) {
-                        List<Component> tip = List.of(Component.translatable(enchants.get(m).getDescriptionId()),
+
+                        List<Component> tip = List.of(
+                                Component.translatable(enchants.get(m).getDescriptionId()),
                                 Component.translatable("tooltip.nu.index.max_lvl").append(String.valueOf(enchantInfo.get(m).getMaxLvl())),
-                                Component.translatable("tooltip.nu.index.xp").append(String.valueOf(enchantInfo.get(m).getXp())));
+                                Component.translatable("tooltip.nu.index.xp").append(String.valueOf(enchantInfo.get(m).getXp())),
+                                EnchantmentHelper.getEnchantmentDescString(enchants.get(m))
+                        );
 
                         guiGraphics.renderTooltip(font, tip, java.util.Optional.empty(), pMouseX, pMouseY);
                         color = 0x009900;
@@ -194,18 +203,23 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
             m ++;
         }
     }
-
-    @Override
-    protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
-        super.renderLabels(pGuiGraphics, pMouseX, pMouseY);
+    private void renderSelectEnchantTooltip(GuiGraphics guiGraphics, int pMouseX, int pMouseY){
+        if (enchantItem.isHovered()) {
+            List<Component> tip = new ArrayList<>();
+            tip.add(Component.translatable("tooltip.nu.index.select").append(String.valueOf(selectEnchants.size())));
+            selectEnchants.forEach((enchantment, integer) -> {
+                tip.add(
+                        enchantment.getFullname(integer)
+                );
+            });
+            ChatFormatting color = ChatFormatting.GOLD;
+            if (needMp > menu.getMP()){
+                color = ChatFormatting.RED;
+            }
+            tip.add(Component.translatable("tooltip.nu.index.need_mp").append(String.valueOf(needMp)).withStyle(color));
+            guiGraphics.renderTooltip(font, tip, java.util.Optional.empty(), pMouseX, pMouseY);
+        }
     }
-
-
-
-
-
-
-
 
 
 
@@ -229,6 +243,7 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
         ListTag es = msg.getList("index.enchants", Tag.TAG_COMPOUND);
         for (int i = 0; i < es.size(); i++){
             CompoundTag compoundtag = es.getCompound(i);
+
             BuiltInRegistries.ENCHANTMENT.getOptional(ResourceLocation.tryParse(compoundtag.getString("eid"))).ifPresent((enchantment) -> {
                 _DataType_StringIntInt stringIntInt = new _DataType_StringIntInt();
 

@@ -11,7 +11,6 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class Items {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, NU.MOD_ID);
-    public static final RegistryObject<Item> INDEX = ITEMS.register("index",()->new BlockItem(Blocks.INDEX.get(),new Item.Properties()));
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);
     }

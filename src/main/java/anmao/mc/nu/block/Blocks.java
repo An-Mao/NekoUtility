@@ -22,7 +22,7 @@ public class Blocks {
 
     private static <T extends Block> RegistryObject<T> registryBlock(String name, Supplier<T> block){
         RegistryObject<T> toReturn = BLOCKS.register(name,block);
-        //registryBlockItem(name,toReturn);
+        registryBlockItem(name,toReturn);
         return toReturn;
     }
 

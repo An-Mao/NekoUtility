@@ -10,13 +10,13 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class Packet_Index_ServerToClient {
+public class IndexPacketSTC {
     private final CompoundTag index;
-    public Packet_Index_ServerToClient(CompoundTag dat){
+    public IndexPacketSTC(CompoundTag dat){
         index = dat;
     }
 
-    public Packet_Index_ServerToClient(FriendlyByteBuf buf){
+    public IndexPacketSTC(FriendlyByteBuf buf){
         index = buf.readNbt();
     }
     public void toBytes(FriendlyByteBuf buf){

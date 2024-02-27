@@ -1,11 +1,11 @@
 package anmao.mc.nu.screen;
 
+import anmao.mc.amlib.constant$data$Table.PlayerCDT;
+import anmao.mc.amlib.entity.EntityHelper;
 import anmao.mc.nu.NU;
-import anmao.mc.nu.amlib.AM_InventoryHelp;
-import anmao.mc.nu.amlib.datatype._DataType_StringIntInt;
-import anmao.mc.nu.amlib.entity.AM_EntityHelp;
 import anmao.mc.nu.block.Blocks;
 import anmao.mc.nu.block.entity.IndexBlockEntity;
+import anmao.mc.nu.datatype._DataType_StringIntInt;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -27,7 +27,7 @@ public class IndexMenu extends AbstractContainerMenu {
     private final Level level;
     private final ContainerData data;
     public IndexMenu(int pContainerId, Inventory inventory , FriendlyByteBuf ex) {
-        this(pContainerId,inventory, AM_EntityHelp.getBlockEntity(inventory.player,ex.readBlockPos()),new SimpleContainerData(6));
+        this(pContainerId,inventory, EntityHelper.getBlockEntity(inventory.player,ex.readBlockPos()),new SimpleContainerData(6));
     }
     public IndexMenu(int cid, Inventory inv, BlockEntity ent, ContainerData dat){
         super(MenuTypes.INDEX_MENU.get(), cid);
@@ -38,7 +38,7 @@ public class IndexMenu extends AbstractContainerMenu {
         addPlayerInventory(inv);
         addPlayerHotBar(inv);
         this.index.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler,0,86,37));
+            this.addSlot(new SlotItemHandler(iItemHandler,0,112,37));
             this.addSlot(new SlotItemHandler(iItemHandler,1,170,37));
         });
         addDataSlots(dat);
@@ -78,12 +78,12 @@ public class IndexMenu extends AbstractContainerMenu {
         if (!sourceSlot.hasItem()) return ItemStack.EMPTY;
         ItemStack sourceStack = sourceSlot.getItem();
         ItemStack copyOfSourceStack = sourceStack.copy();
-        if (ind < AM_InventoryHelp.VANILLA_FIRST_SLOT_INDEX + AM_InventoryHelp.VANILLA_SLOT_COUNT){
-            if (!moveItemStackTo(sourceStack,AM_InventoryHelp.INVENTORY_FIRST_SLOT_INDEX,AM_InventoryHelp.INVENTORY_FIRST_SLOT_INDEX+AM_InventoryHelp.INVENTORY_SLOT_COUNT,false)){
+        if (ind < PlayerCDT.VANILLA_FIRST_SLOT_INDEX + PlayerCDT.VANILLA_SLOT_COUNT){
+            if (!moveItemStackTo(sourceStack,PlayerCDT.INVENTORY_FIRST_SLOT_INDEX,PlayerCDT.INVENTORY_FIRST_SLOT_INDEX+PlayerCDT.INVENTORY_SLOT_COUNT,false)){
                 return ItemStack.EMPTY;
             }
-        }else if (ind < AM_InventoryHelp.INVENTORY_FIRST_SLOT_INDEX+AM_InventoryHelp.INVENTORY_SLOT_COUNT){
-            if (!moveItemStackTo(sourceStack,AM_InventoryHelp.VANILLA_FIRST_SLOT_INDEX,AM_InventoryHelp.VANILLA_FIRST_SLOT_INDEX + AM_InventoryHelp.VANILLA_SLOT_COUNT,false)){
+        }else if (ind < PlayerCDT.INVENTORY_FIRST_SLOT_INDEX+PlayerCDT.INVENTORY_SLOT_COUNT){
+            if (!moveItemStackTo(sourceStack,PlayerCDT.VANILLA_FIRST_SLOT_INDEX,PlayerCDT.VANILLA_FIRST_SLOT_INDEX + PlayerCDT.VANILLA_SLOT_COUNT,false)){
                 return ItemStack.EMPTY;
             }
         }else {

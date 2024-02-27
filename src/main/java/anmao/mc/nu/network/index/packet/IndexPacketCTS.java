@@ -10,12 +10,12 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class Packet_Index_ClientToServer {
+public class IndexPacketCTS {
     private final CompoundTag dat;
-    public Packet_Index_ClientToServer(CompoundTag dat){
+    public IndexPacketCTS(CompoundTag dat){
         this.dat = dat;
     }
-    public Packet_Index_ClientToServer(FriendlyByteBuf buf){
+    public IndexPacketCTS(FriendlyByteBuf buf){
         this.dat = buf.readNbt();
     }
     public void toBytes(FriendlyByteBuf buf){
@@ -25,10 +25,8 @@ public class Packet_Index_ClientToServer {
         NetworkEvent.Context context = ctx.get();
         context.enqueueWork(()->{
             ServerPlayer sender = context.getSender();
-            //System.out.println("player" + sender);
             if (sender != null){
                 if (sender.level() instanceof ServerLevel serverLevel) {
-                    System.out.println("Net:CTS:SL");
                     IndexBlockEntity blockEntity = (IndexBlockEntity) serverLevel.getBlockEntity(new BlockPos(dat.getInt("be.x"), dat.getInt("be.y"), dat.getInt("be.z")));
                     if (blockEntity != null) {
                         blockEntity.handlePacket(dat);
@@ -37,6 +35,5 @@ public class Packet_Index_ClientToServer {
             }
         });
         ctx.get().setPacketHandled(true);
-        //return true;
     }
 }

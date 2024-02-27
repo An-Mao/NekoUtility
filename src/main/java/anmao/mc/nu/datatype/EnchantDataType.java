@@ -1,4 +1,4 @@
-package anmao.mc.nu.amlib.datatype;
+package anmao.mc.nu.datatype;
 
 import anmao.mc.nu.amlib.AM_EnchantHelp;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -12,12 +12,12 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 import java.util.HashMap;
 
-public class _DataType_EnchantData {
+public class EnchantDataType {
     private final String SAVE_DAT_ENCHANT_ID = "eid";
     private final String SAVE_DAT_ENCHANT_MAX = "max";
     private final String SAVE_DAT_ENCHANT_XP = "xp";
     private HashMap<Enchantment, _DataType_StringIntInt> enchantData;
-    public _DataType_EnchantData(){
+    public EnchantDataType(){
         enchantData = new HashMap<>();
     }
     public ListTag formatEnchants(){
@@ -50,7 +50,6 @@ public class _DataType_EnchantData {
         return dat;
     }
     public void addEnchant(String eid,int pLvl){
-        System.out.println("data:enchant data:add enchant:"+eid+"::"+pLvl);
         Enchantment lEnchant = AM_EnchantHelp.IdToEnchant(eid);
         _DataType_StringIntInt lEnchantData ;
         if (enchantData.containsKey(lEnchant)){
