@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "A": {
-      "item": "minecraft:redstone"
+      "item": "minecraft:redstone_block"
     },
     "B": {
       "item": "minecraft:bookshelf"

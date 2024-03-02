@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "nu:yang"
+    },
+    "B": {
+      "item": "nu:yin"
+    }
+  },
+  "pattern": [
+    "B",
+    "A",
+    "A"
+  ],
+  "result": {
+    "item": "nu:dui"
+  },
+  "show_notification": true
+}

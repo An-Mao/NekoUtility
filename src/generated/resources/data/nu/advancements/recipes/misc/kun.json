@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "nu:kun"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_yin": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "nu:yin"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_yin",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "nu:kun"
+    ]
+  },
+  "sends_telemetry_event": false
+}

@@ -1,0 +1,42 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "nu:zhen"
+    },
+    "B": {
+      "item": "nu:qian"
+    },
+    "C": {
+      "item": "nu:dui"
+    },
+    "D": {
+      "item": "nu:kan"
+    },
+    "E": {
+      "item": "minecraft:netherite_sword"
+    },
+    "F": {
+      "item": "nu:li"
+    },
+    "G": {
+      "item": "nu:gen"
+    },
+    "H": {
+      "item": "nu:kun"
+    },
+    "I": {
+      "item": "nu:xun"
+    }
+  },
+  "pattern": [
+    "ABC",
+    "DEF",
+    "GHI"
+  ],
+  "result": {
+    "item": "nu:the_eight_trigrams"
+  },
+  "show_notification": true
+}

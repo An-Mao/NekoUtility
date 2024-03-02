@@ -1,6 +1,5 @@
 package anmao.mc.nu.datatype;
 
-import anmao.mc.nu.amlib.AM_EnchantHelp;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -10,13 +9,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 
 public class EnchantDataType {
     private final String SAVE_DAT_ENCHANT_ID = "eid";
     private final String SAVE_DAT_ENCHANT_MAX = "max";
     private final String SAVE_DAT_ENCHANT_XP = "xp";
-    private HashMap<Enchantment, _DataType_StringIntInt> enchantData;
+    private HashMap<Enchantment, EnchantDataTypeCore> enchantData;
     public EnchantDataType(){
         enchantData = new HashMap<>();
     }
@@ -31,31 +31,31 @@ public class EnchantDataType {
         for (int i = 0; i < es.size(); i++){
             CompoundTag compoundtag = es.getCompound(i);
             BuiltInRegistries.ENCHANTMENT.getOptional(ResourceLocation.tryParse(compoundtag.getString("eid"))).ifPresent((enchantment) -> {
-                _DataType_StringIntInt stringIntInt = new _DataType_StringIntInt();
+                EnchantDataTypeCore stringIntInt = new EnchantDataTypeCore();
 
                 int lvl = Mth.clamp(compoundtag.getInt(SAVE_DAT_ENCHANT_MAX), 0, 255);
                 stringIntInt.setEid(compoundtag.getString(SAVE_DAT_ENCHANT_ID));
-                stringIntInt.setXp(compoundtag.getInt(SAVE_DAT_ENCHANT_XP));
+                stringIntInt.setXp(compoundtag.getString(SAVE_DAT_ENCHANT_XP));
                 stringIntInt.setMaxLvl(lvl);
                 enchantData.put(enchantment, stringIntInt);
             });
         }
 
     }
-    public CompoundTag setNewData(String eid,int max,int xp){
+    public CompoundTag setNewData(String eid, int max, BigInteger xp){
         CompoundTag dat = new CompoundTag();
         dat.putString(SAVE_DAT_ENCHANT_ID,eid);
         dat.putInt(SAVE_DAT_ENCHANT_MAX,max);
-        dat.putInt(SAVE_DAT_ENCHANT_XP,xp);
+        dat.putString(SAVE_DAT_ENCHANT_XP,xp.toString());
         return dat;
     }
     public void addEnchant(String eid,int pLvl){
-        Enchantment lEnchant = AM_EnchantHelp.IdToEnchant(eid);
-        _DataType_StringIntInt lEnchantData ;
+        Enchantment lEnchant = anmao.mc.amlib.enchantment.EnchantmentHelper.IdToEnchant(eid);
+        EnchantDataTypeCore lEnchantData ;
         if (enchantData.containsKey(lEnchant)){
             lEnchantData = enchantData.get(lEnchant);
         }else {
-            lEnchantData = new _DataType_StringIntInt();
+            lEnchantData = new EnchantDataTypeCore();
         }
         lEnchantData.setEid(eid);
         lEnchantData.addXp(lvlToXp(pLvl));
@@ -67,11 +67,11 @@ public class EnchantDataType {
         for(int i = 0; i < es.size(); ++i) {
             CompoundTag compoundtag = es.getCompound(i);
             BuiltInRegistries.ENCHANTMENT.getOptional(EnchantmentHelper.getEnchantmentId(compoundtag)).ifPresent((enchantment) -> {
-                _DataType_StringIntInt stringIntInt ;
+                EnchantDataTypeCore stringIntInt ;
                 if (enchantData.containsKey(enchantment)){
                     stringIntInt = enchantData.get(enchantment);
                 }else {
-                    stringIntInt = new _DataType_StringIntInt();
+                    stringIntInt = new EnchantDataTypeCore();
                 }
                 int lvl = EnchantmentHelper.getEnchantmentLevel(compoundtag);
                 stringIntInt.setEid(compoundtag.getString("id"));
@@ -81,23 +81,25 @@ public class EnchantDataType {
             });
         }
     }
-    private int lvlToXp(int lvl){
-        return 1 << (lvl - 1);
+    private BigInteger lvlToXp(int lvl){
+        //return 1 << (lvl - 1);
+        BigInteger base = new BigInteger("2");
+        return base.pow(lvl - 1);
     }
-    public HashMap<Enchantment, _DataType_StringIntInt> getEnchantData() {
+    public HashMap<Enchantment, EnchantDataTypeCore> getEnchantData() {
         return enchantData;
     }
 
     public int getLvl(Enchantment pEnchantment){
         return enchantData.get(pEnchantment).getMaxLvl();
     }
-    public int getXp(Enchantment pEnchantment){
+    public BigInteger getXp(Enchantment pEnchantment){
         return enchantData.get(pEnchantment).getXp();
     }
 
     public boolean dimXp(Enchantment pEnchantment,int pLvl){
-        int lXp = getXp(pEnchantment) - lvlToXp(pLvl);
-        if (lXp < 0){
+        BigInteger lXp = getXp(pEnchantment).subtract(lvlToXp(pLvl));
+        if (lXp.compareTo(BigInteger.ZERO) < 0){
             return false;
         }
         enchantData.get(pEnchantment).setXp(lXp);

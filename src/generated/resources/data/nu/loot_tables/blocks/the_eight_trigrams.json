@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "nu:the_eight_trigrams"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "nu:blocks/the_eight_trigrams"
+}

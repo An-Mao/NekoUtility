@@ -1,6 +1,6 @@
 package anmao.mc.nu.network.index.packet;
 
-import anmao.mc.nu.screen.IndexScreen;
+import anmao.mc.nu.screen.index.IndexScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;

@@ -1,10 +1,8 @@
 package anmao.mc.nu.datagen.loot;
 
-import anmao.mc.nu.block.Blocks;
+import anmao.mc.nu.block.NUBlocks;
 import net.minecraft.data.loot.BlockLootSubProvider;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -17,11 +15,12 @@ public class Loot_BlockLootTables extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        this.dropSelf(Blocks.INDEX.get());
+        this.dropSelf(NUBlocks.INDEX.get());
+        this.dropSelf(NUBlocks.THE_EIGHT_TRIGRAMS.get());
     }
 
     @Override
     protected Iterable<Block> getKnownBlocks() {
-        return Blocks.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
+        return NUBlocks.BLOCKS.getEntries().stream().map(RegistryObject::get)::iterator;
     }
 }

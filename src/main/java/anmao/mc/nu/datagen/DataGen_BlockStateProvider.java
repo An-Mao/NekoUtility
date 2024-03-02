@@ -1,7 +1,7 @@
 package anmao.mc.nu.datagen;
 
 import anmao.mc.nu.NU;
-import anmao.mc.nu.block.Blocks;
+import anmao.mc.nu.block.NUBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
@@ -17,8 +17,10 @@ public class DataGen_BlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         //simpleBlock(Blocks.INDEX.get(), new ModelFile.UncheckedModelFile(modLoc("block/index")));
-        simpleBlockWithItem(Blocks.INDEX.get(),
+        simpleBlockWithItem(NUBlocks.INDEX.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/index")));
+        simpleBlockWithItem(NUBlocks.THE_EIGHT_TRIGRAMS.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/the_eight_trigrams")));
     }
 
 

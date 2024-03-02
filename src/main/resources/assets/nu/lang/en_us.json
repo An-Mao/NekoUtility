@@ -1,5 +1,17 @@
 {
-  "block.nu.index": "Index",
+  "item.nu.yin": "Yin",
+  "item.nu.yang": "Yang",
+  "item.nu.qian": "Qian",
+  "item.nu.kun": "Kun",
+  "item.nu.dui": "Dui",
+  "item.nu.gen": "Gen",
+  "item.nu.kan": "Kan",
+  "item.nu.li": "Li",
+  "item.nu.xun": "Xun",
+  "item.nu.zhen": "Zhen",
+
+  "block.nu.index": "The Library of Magic - Index",
+  "block.nu.the_eight_trigrams": "The Eight Trigrams",
 
   "tooltip.nu.index.save.all": "Save:",
   "tooltip.nu.index.max_lvl": "Max Lvl:",
@@ -8,5 +20,9 @@
   "tooltip.nu.index.select": "Select:",
   "tooltip.nu.index.page": "Page:",
   "create_tab.nu_tab": "Neko Utility",
-  "tooltip.nu.index.need_mp": "Need MP:"
+  "tooltip.nu.index.need_mp": "Need MP:",
+  "tooltip.nu.index.mp": "MP:",
+  "tooltip.nu.index.item.desc": "Can store enchantments.",
+  "tooltip.nu.index.item.desc1": "Replenish MP with Lapis Lazuli.",
+  "tooltip.nu.the_eight_trigrams.item.desc": "The gossip array, originating from ancient China, continuously inflicts damage on entities within a 64-block radius, excluding players, NPCs, and animals."
 }

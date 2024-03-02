@@ -1,3 +1,25 @@
-// 1.20.1	2024-02-27T12:16:03.2110009	Recipes
+// 1.20.1	2024-02-29T10:45:11.5738352	Recipes
+033a79d53c22018203cfdb6e71eb0f14903c2484 data/nu/advancements/recipes/misc/dui.json
+182360e70e2f6cfc77a56baf2aa08559209bb5cd data/nu/advancements/recipes/misc/gen.json
 d208961c3cd449e875ce5dfe49fd04c7d784ae80 data/nu/advancements/recipes/misc/index.json
-986d774c20aa017b6ab61ec28db998b1d7397dea data/nu/recipes/index.json
+dfc143192d321c70267097a06afedec43b5dda07 data/nu/advancements/recipes/misc/kan.json
+bd97b86fca46b3291a63abcf34a9df2ad41583e2 data/nu/advancements/recipes/misc/kun.json
+f8492680240cc10dafafa7750738f4c32b3eec5c data/nu/advancements/recipes/misc/li.json
+6d950418dda8acbde770fb0e98d88f472aa402bf data/nu/advancements/recipes/misc/qian.json
+a99f47aa302fc2f7cc5b3845f471060eab81f039 data/nu/advancements/recipes/misc/the_eight_trigrams.json
+cc00ee85f1de4af3a4add83f1f75d215d159fcec data/nu/advancements/recipes/misc/xun.json
+b91550de4e6107f128c13c9831f9b1da3c2e3282 data/nu/advancements/recipes/misc/yang.json
+3089c9665208f9635046b79197dad5079a0fb84c data/nu/advancements/recipes/misc/yin.json
+e1037a79e8bbf0a3696ddd0dfb0399f5751fe736 data/nu/advancements/recipes/misc/zhen.json
+3e4472ed77bbb39547182976095d4092260c17d2 data/nu/recipes/dui.json
+e5ca21a6c622a3ab27759aad758e69fe26a3ea44 data/nu/recipes/gen.json
+88e6b50adf408b298f99d6f4fb1402b45f679d75 data/nu/recipes/index.json
+7b3ce45a1dfe00a4d010438b468e3d89cbb58a72 data/nu/recipes/kan.json
+000d4b26fc4ac8b03ea852ab214e0dc7348c976a data/nu/recipes/kun.json
+a68241e428b53e1e97ad4341e0a1c2f96968b49f data/nu/recipes/li.json
+d4e980ae2c12da862ca7bde560ad920929f36549 data/nu/recipes/qian.json
+2794128eec93c557533a958300907054eb0b323e data/nu/recipes/the_eight_trigrams.json
+ea2d76e524b41386f7a64809cac9a7f6eb9f98f4 data/nu/recipes/xun.json
+6cc57aaedd2d511d451c9fbc48cccfc3df284dfb data/nu/recipes/yang.json
+c48daec4eb851a840bc571ba32b30e9c92ae6938 data/nu/recipes/yin.json
+edb6554e39dd66f392f9543775e1dfe27f3c8162 data/nu/recipes/zhen.json
