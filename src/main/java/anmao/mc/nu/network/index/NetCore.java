@@ -1,6 +1,7 @@
 package anmao.mc.nu.network.index;
 
 import anmao.mc.nu.NU;
+import anmao.mc.nu.network.index.packet.EquipmentEnhancerPacketCTS;
 import anmao.mc.nu.network.index.packet.IndexPacketCTS;
 import anmao.mc.nu.network.index.packet.IndexPacketSTC;
 import net.minecraft.resources.ResourceLocation;
@@ -29,6 +30,15 @@ public class NetCore {
                 .decoder(IndexPacketCTS::new)
                 .encoder(IndexPacketCTS::toBytes)
                 .consumerMainThread(IndexPacketCTS::handle).add();
+
+        INSTANCE.messageBuilder(EquipmentEnhancerPacketCTS.class,id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(EquipmentEnhancerPacketCTS::new)
+                .encoder(EquipmentEnhancerPacketCTS::toBytes)
+                .consumerMainThread(EquipmentEnhancerPacketCTS::handle).add();
+
+
+
+
         INSTANCE.messageBuilder(IndexPacketSTC.class,id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(IndexPacketSTC::new)
                 .encoder(IndexPacketSTC::toBytes)

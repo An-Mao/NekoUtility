@@ -1,6 +1,7 @@
 package anmao.mc.nu.block;
 
 import anmao.mc.nu.NU;
+import anmao.mc.nu.block.equipment_enhancer.EquipmentEnhancerBlock;
 import anmao.mc.nu.block.index.IndexBlock;
 import anmao.mc.nu.block.the_eight_trigrams.TheEightTrigramsBlock;
 import anmao.mc.nu.item.NUItems;
@@ -19,6 +20,7 @@ public class NUBlocks {
 
     public static final RegistryObject<Block> INDEX = registryBlock("index", IndexBlock::new);
     public static final RegistryObject<Block> THE_EIGHT_TRIGRAMS = registryBlock("the_eight_trigrams", TheEightTrigramsBlock::new);
+    public static final RegistryObject<Block> EQUIPMENT_ENHANCER = registryBlock("equipment_enhancer", EquipmentEnhancerBlock::new);
 
 
 

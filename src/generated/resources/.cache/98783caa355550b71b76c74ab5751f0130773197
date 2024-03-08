@@ -1,5 +1,7 @@
-// 1.20.1	2024-02-28T11:09:31.0985383	Block States: nu
+// 1.20.1	2024-03-03T10:15:24.465413	Block States: nu
+7a329edca0534d5e69635678aedcf41d8c1c0d40 assets/nu/blockstates/equipment_enhancer.json
 ff8781242a58890f526529a29aa2828ca5237797 assets/nu/blockstates/index.json
 c938d1f4e083f1cdadb2a2cca675f61d7cb63073 assets/nu/blockstates/the_eight_trigrams.json
+93fe5bdaccf7b2d3e119a236f6d30228b0da65af assets/nu/models/item/equipment_enhancer.json
 646e828d58b182d8af335cf116e52fd7efce52c2 assets/nu/models/item/index.json
 ee24c666f8dda8afbbc23bdffcb29b3185beb36f assets/nu/models/item/the_eight_trigrams.json

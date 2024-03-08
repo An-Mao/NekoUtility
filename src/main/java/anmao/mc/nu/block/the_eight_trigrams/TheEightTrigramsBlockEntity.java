@@ -1,7 +1,7 @@
-package anmao.mc.nu.block.entity.the_eight_trigrams;
+package anmao.mc.nu.block.the_eight_trigrams;
 
 import anmao.mc.amlib.entity.EntityHelper;
-import anmao.mc.nu.block.entity.NUBlockEntities;
+import anmao.mc.nu.block.NUBlockEntities;
 import anmao.mc.nu.config.Configs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;

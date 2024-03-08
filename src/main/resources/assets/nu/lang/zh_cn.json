@@ -23,5 +23,14 @@
   "tooltip.nu.index.save.all": "已储存:",
   "tooltip.nu.index.select": "已选择:",
   "tooltip.nu.index.xp": "储存经验:",
-  "tooltip.nu.the_eight_trigrams.item.desc": "八卦阵，源自中国的古老阵法。可持续对64格内的除（玩家、NPC、动物）外的实体造成伤害。"
+  "tooltip.nu.the_eight_trigrams.item.desc": "八卦阵，源自中国的古老阵法。可持续对64格内的除（玩家、NPC、动物）外的实体造成伤害。",
+  "block.nu.equipment_enhancer": "装备强化器",
+  "screen.nu.equipment_enhancer.drop_down_list.tip": "选择一个能力",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.tip": "生效位置",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.mainhand": "主手",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.offhand": "副手",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.feet": "脚",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.legs": "腿",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.chest": "胸",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.head": "头"
 }

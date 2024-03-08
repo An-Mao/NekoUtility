@@ -1,8 +1,7 @@
 package anmao.mc.nu.block.index;
 
 import anmao.mc.nu.block.EntityBlockCore;
-import anmao.mc.nu.block.entity.NUBlockEntities;
-import anmao.mc.nu.block.entity.index.IndexBlockEntity;
+import anmao.mc.nu.block.NUBlockEntities;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

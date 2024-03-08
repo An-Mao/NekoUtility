@@ -1,4 +1,4 @@
-package anmao.mc.nu.block.entity.index;
+package anmao.mc.nu.block.index;
 
 import anmao.mc.amlib.render.RenderCube;
 import com.mojang.blaze3d.vertex.PoseStack;

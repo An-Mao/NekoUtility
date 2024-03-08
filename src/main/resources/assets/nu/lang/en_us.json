@@ -24,5 +24,14 @@
   "tooltip.nu.index.mp": "MP:",
   "tooltip.nu.index.item.desc": "Can store enchantments.",
   "tooltip.nu.index.item.desc1": "Replenish MP with Lapis Lazuli.",
-  "tooltip.nu.the_eight_trigrams.item.desc": "The gossip array, originating from ancient China, continuously inflicts damage on entities within a 64-block radius, excluding players, NPCs, and animals."
+  "tooltip.nu.the_eight_trigrams.item.desc": "The gossip array, originating from ancient China, continuously inflicts damage on entities within a 64-block radius, excluding players, NPCs, and animals.",
+  "block.nu.equipment_enhancer": "Equipment Enhancer",
+  "screen.nu.equipment_enhancer.drop_down_list.tip": "select a attribute",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.tip": "effective slot",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.mainhand": "mainhand",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.offhand": "offhand",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.feet": "feet",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.legs": "legs",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.chest": "chest",
+  "screen.nu.equipment_enhancer.enhancer_slot_list.head": "head"
 }

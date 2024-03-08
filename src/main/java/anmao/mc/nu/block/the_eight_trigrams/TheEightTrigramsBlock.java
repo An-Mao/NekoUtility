@@ -1,8 +1,7 @@
 package anmao.mc.nu.block.the_eight_trigrams;
 
 import anmao.mc.nu.block.EntityBlockCore;
-import anmao.mc.nu.block.entity.NUBlockEntities;
-import anmao.mc.nu.block.entity.the_eight_trigrams.TheEightTrigramsBlockEntity;
+import anmao.mc.nu.block.NUBlockEntities;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

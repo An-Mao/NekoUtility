@@ -2,6 +2,7 @@ package anmao.mc.nu.event;
 
 import anmao.mc.nu.NU;
 import anmao.mc.nu.screen.MenuTypes;
+import anmao.mc.nu.screen.equipment_enhancer.EquipmentEnhancerScreen;
 import anmao.mc.nu.screen.index.IndexScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
@@ -14,5 +15,6 @@ public class ClientEvent {
     public static void onClientSetup(FMLClientSetupEvent event)
     {
         MenuScreens.register(MenuTypes.INDEX_MENU.get(), IndexScreen::new);
+        MenuScreens.register(MenuTypes.EQUIPMENT_ENHANCER_MENU.get(), EquipmentEnhancerScreen::new);
     }
 }

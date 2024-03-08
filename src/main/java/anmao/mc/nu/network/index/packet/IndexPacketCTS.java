@@ -1,6 +1,6 @@
 package anmao.mc.nu.network.index.packet;
 
-import anmao.mc.nu.block.entity.index.IndexBlockEntity;
+import anmao.mc.nu.block.index.IndexBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;

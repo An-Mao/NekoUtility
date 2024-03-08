@@ -1,18 +1,20 @@
 package anmao.mc.nu.screen.index;
 
-import anmao.mc.amlib.constant$data$Table.PlayerCDT;
 import anmao.mc.amlib.entity.EntityHelper;
-import anmao.mc.nu.NU;
 import anmao.mc.nu.block.NUBlocks;
-import anmao.mc.nu.block.entity.index.IndexBlockEntity;
+import anmao.mc.nu.block.index.IndexBlockEntity;
 import anmao.mc.nu.datatype.EnchantDataTypeCore;
+import anmao.mc.nu.screen.AbstractContainerMenuCore;
 import anmao.mc.nu.screen.MenuTypes;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
-public class IndexMenu extends AbstractContainerMenu {
+public class IndexMenu extends AbstractContainerMenuCore {
     private static final int invSlotX = 58;
     public final IndexBlockEntity index;
     private final Level level;
@@ -31,23 +33,32 @@ public class IndexMenu extends AbstractContainerMenu {
         this(pContainerId,inventory, EntityHelper.getBlockEntity(inventory.player,ex.readBlockPos()),new SimpleContainerData(6));
     }
     public IndexMenu(int cid, Inventory inv, BlockEntity ent, ContainerData dat){
-        super(MenuTypes.INDEX_MENU.get(), cid);
+        super(MenuTypes.INDEX_MENU.get(), cid,2);
         checkContainerSize(inv,2);
         index = (IndexBlockEntity) ent;
         this.level = inv.player.level();
         this.data = dat;
-        addPlayerInventory(inv);
-        addPlayerHotBar(inv);
+        addPlayerInventory(inv,108,84,18);
+        addPlayerHotBar(inv,108,142,18);
         this.index.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler,0,112,37));
-            this.addSlot(new SlotItemHandler(iItemHandler,1,170,37));
+            this.addSlot(new SlotItemHandler(iItemHandler,0,162,37){
+
+                @Override
+                public int getMaxStackSize(@NotNull ItemStack itemStack) {
+                    if (itemStack.getItem() == Items.LAPIS_BLOCK || itemStack.getItem() == Items.LAPIS_LAZULI){
+                        return 64;
+                    }
+                    return 1;
+                }
+            });
+            this.addSlot(new SlotItemHandler(iItemHandler,1,220,37){
+                @Override
+                public boolean mayPlace(@NotNull ItemStack stack) {
+                    return false;
+                }
+            });
         });
         addDataSlots(dat);
-    }
-
-    @Override
-    public void slotsChanged(@NotNull Container pContainer) {
-        super.slotsChanged(pContainer);
     }
 
     public boolean isCrafting(){
@@ -74,47 +85,8 @@ public class IndexMenu extends AbstractContainerMenu {
         return data.get(5);
     }
     @Override
-    public @NotNull ItemStack quickMoveStack(@NotNull Player player, int ind) {
-        Slot sourceSlot = slots.get(ind);
-        if (!sourceSlot.hasItem()) return ItemStack.EMPTY;
-        ItemStack sourceStack = sourceSlot.getItem();
-        ItemStack copyOfSourceStack = sourceStack.copy();
-        if (ind < PlayerCDT.VANILLA_FIRST_SLOT_INDEX + PlayerCDT.VANILLA_SLOT_COUNT){
-            if (!moveItemStackTo(sourceStack,PlayerCDT.INVENTORY_FIRST_SLOT_INDEX,PlayerCDT.INVENTORY_FIRST_SLOT_INDEX+PlayerCDT.INVENTORY_SLOT_COUNT,false)){
-                return ItemStack.EMPTY;
-            }
-        }else if (ind < PlayerCDT.INVENTORY_FIRST_SLOT_INDEX+PlayerCDT.INVENTORY_SLOT_COUNT){
-            if (!moveItemStackTo(sourceStack,PlayerCDT.VANILLA_FIRST_SLOT_INDEX,PlayerCDT.VANILLA_FIRST_SLOT_INDEX + PlayerCDT.VANILLA_SLOT_COUNT,false)){
-                return ItemStack.EMPTY;
-            }
-        }else {
-            NU.LOG.error("Error Inventory slot index");
-            return ItemStack.EMPTY;
-        }
-        if (sourceStack.getCount() == 0){
-            sourceSlot.set(ItemStack.EMPTY);
-        }else {
-            sourceSlot.setChanged();
-        }
-        sourceSlot.onTake(player,sourceStack);
-        return copyOfSourceStack;
-    }
-
-    @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NotNull Player player) {
         return stillValid(ContainerLevelAccess.create(level,index.getBlockPos()),player, NUBlocks.INDEX.get());
-    }
-    private void addPlayerInventory(Inventory playerInv){
-        for (int i= 0; i<3;i++){
-            for (int m = 0;m<9;m++){
-                this.addSlot(new Slot(playerInv,m+i*9+9,invSlotX+m*18,84+i*18));
-            }
-        }
-    }
-    private void addPlayerHotBar(Inventory inventory){
-        for (int i = 0;i<9;i++){
-            this.addSlot(new Slot(inventory,i,invSlotX+i*18,142));
-        }
     }
 
     public HashMap<Enchantment, EnchantDataTypeCore> getEnchantData() {

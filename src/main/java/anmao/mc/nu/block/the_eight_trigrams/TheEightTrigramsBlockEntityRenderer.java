@@ -1,4 +1,4 @@
-package anmao.mc.nu.block.entity.the_eight_trigrams;
+package anmao.mc.nu.block.the_eight_trigrams;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;

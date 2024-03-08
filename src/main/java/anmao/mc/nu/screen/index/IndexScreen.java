@@ -1,11 +1,11 @@
 package anmao.mc.nu.screen.index;
 
+import anmao.mc.amlib.amlib.network.Net;
+import anmao.mc.amlib.amlib.network.easy_net.EasyNetCTS;
 import anmao.mc.amlib.color._ColorCDT;
 import anmao.mc.amlib.enchantment.EnchantmentHelper;
 import anmao.mc.nu.NU;
 import anmao.mc.nu.datatype.EnchantDataTypeCore;
-import anmao.mc.nu.network.index.NetCore;
-import anmao.mc.nu.network.index.packet.IndexPacketCTS;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -67,8 +67,8 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
         this.titleLabelY = 10000;
         imageHeight = 166;
         imageWidth = 276;
-        x = (width - imageWidth)/2;
-        y = (height - imageHeight)/2;
+        leftPos = x = (width - imageWidth)/2;
+        topPos = y = (height - imageHeight)/2;
         addMustButton();
     }
     private ImageButton creatImageButton(int x, int y, int width, int height, int startX, int startY, int yDiffTex, ResourceLocation res, Button.OnPress onPress,Component component){
@@ -92,11 +92,11 @@ public class IndexScreen extends AbstractContainerScreen<IndexMenu> {
             return;
         }
         CompoundTag lDat = EnchantmentHelper.EnchantsToCompoundTag(selectEnchants,"am.enchants");
-
+        lDat.putString("key","index_block");
         lDat.putInt("be.x",menu.getX());
         lDat.putInt("be.y",menu.getY());
         lDat.putInt("be.z",menu.getZ());
-        NetCore.sendToServer(new IndexPacketCTS(lDat));
+        Net.EasyNetCTS(new EasyNetCTS(lDat));
     }
     private void addROW(){
         if (ROW < enchants.size() / 7){

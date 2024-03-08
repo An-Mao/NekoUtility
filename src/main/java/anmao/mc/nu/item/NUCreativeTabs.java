@@ -17,6 +17,7 @@ public class NUCreativeTabs {
             .displayItems((pParameters, pOutput) -> {
                 pOutput.accept(NUBlocks.INDEX.get());
                 pOutput.accept(NUBlocks.THE_EIGHT_TRIGRAMS.get());
+                pOutput.accept(NUBlocks.EQUIPMENT_ENHANCER.get());
 
                 pOutput.accept(NUItems.YIN.get());
                 pOutput.accept(NUItems.YANG.get());

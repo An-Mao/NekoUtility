@@ -1,4 +1,4 @@
-package anmao.mc.nu.block.entity;
+package anmao.mc.nu.block;
 
 import anmao.mc.nu.NU;
 import net.minecraft.core.BlockPos;
@@ -25,8 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class MenuBlockEntityCore extends BlockEntity implements MenuProvider {
-    private final String inventorySaveKey = NU.MOD_ID + ".inventory";
-    private final ItemStackHandler itemStackHandler;
+    protected final String inventorySaveKey = NU.MOD_ID + ".inventory";
+    protected final ItemStackHandler itemStackHandler;
 
     private LazyOptional<IItemHandler> lazyOptional = LazyOptional.empty();
     public MenuBlockEntityCore(BlockEntityType<?> pType, BlockPos pPos, BlockState pBlockState,int itemNumber) {

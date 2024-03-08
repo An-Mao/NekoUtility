@@ -1,8 +1,8 @@
-package anmao.mc.nu.block.entity.index;
+package anmao.mc.nu.block.index;
 
 import anmao.mc.amlib.enchantment.EnchantmentHelper;
-import anmao.mc.nu.block.entity.NUBlockEntities;
-import anmao.mc.nu.block.entity.MenuBlockEntityCore;
+import anmao.mc.nu.block.NUBlockEntities;
+import anmao.mc.nu.block.MenuBlockEntityCore;
 import anmao.mc.nu.config.Configs;
 import anmao.mc.nu.datatype.EnchantDataType;
 import anmao.mc.nu.datatype.EnchantDataTypeCore;
@@ -37,6 +37,7 @@ public class IndexBlockEntity extends MenuBlockEntityCore {
     private final String enchantDatSaveKey ="index.enchants", progressSaveKey = "index.progress", mpSaveKey = "index.mp";
     private int progress = 0,maxProgress = 70,mp = 0;
     private final int aInputSlotIndex = 0, aOutputSlotIndex = 1;
+
     protected final ContainerData data;
     private final BlockPos blockPos;
     private Player player;

@@ -21,6 +21,8 @@ public class DataGen_BlockStateProvider extends BlockStateProvider {
                 new ModelFile.UncheckedModelFile(modLoc("block/index")));
         simpleBlockWithItem(NUBlocks.THE_EIGHT_TRIGRAMS.get(),
                 new ModelFile.UncheckedModelFile(modLoc("block/the_eight_trigrams")));
+        simpleBlockWithItem(NUBlocks.EQUIPMENT_ENHANCER.get(),
+                new ModelFile.UncheckedModelFile(modLoc("block/equipment_enhancer")));
     }
 
 
