@@ -22,6 +22,7 @@ public abstract class RenderWidgetCore extends AbstractWidget implements Rendera
     protected final DT_XYWH widget_xywh;
     protected int bgUsualColor, bgSelectColor;
     protected DT_XYWHUV bgSelect = null , bgNormal = null;
+    protected int layerZ = 1000;
     public RenderWidgetCore(DT_XYWH dt_xywh, Component pMessage) {
         this(Minecraft.getInstance().font,dt_xywh,pMessage);
     }
@@ -32,6 +33,10 @@ public abstract class RenderWidgetCore extends AbstractWidget implements Rendera
         this.widget_xywh = dt_xywh;
         this.bgUsualColor = Color.gray.getRGB();
         this.bgSelectColor = Color.LIGHT_GRAY.getRGB();
+    }
+
+    public void setLayerZ(int layerZ) {
+        this.layerZ = layerZ;
     }
 
     public void setBgNormal(DT_XYWHUV bgNormal) {

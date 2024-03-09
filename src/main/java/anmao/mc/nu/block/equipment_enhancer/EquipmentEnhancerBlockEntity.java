@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class EquipmentEnhancerBlockEntity extends MenuBlockEntityCore {
-    public static final int SlotSize = 17;
+    public static final int SlotSize = 3;
     private Player player;
 
     private final BlockPos blockPos;
@@ -41,7 +41,7 @@ public class EquipmentEnhancerBlockEntity extends MenuBlockEntityCore {
 
     private final int SlotIndex_ItemInput = 0;
     private final int SlotIndex_EnhancerItem = 1;
-    private final int SlotIndex_ItemOutput = SlotSize - 1;
+    private final int SlotIndex_ItemOutput = 2;
 
     public EquipmentEnhancerBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(NUBlockEntities.EQUIPMENT_ENHANCER.get(), pPos, pBlockState, SlotSize);
@@ -120,8 +120,6 @@ public class EquipmentEnhancerBlockEntity extends MenuBlockEntityCore {
         itemStack.getOrCreateTag();
         if (itemStack.getTag().getInt("enhancer.nu.slot." + effectiveSlot) < itemConfig.getSlotMaxEnhancer(effectiveSlot)) {
             AttributeModifier attributeModifier = new AttributeModifier("attribute.nu.enhancer."+effectiveSlot+"." + enhancerItemConfig.getType(), enhancerItemConfig.getValue(), enhancerItemConfig.getOperationType());
-            //addItemAttributeModifier(itemStack, att, add[0], null);
-            //itemStack.addAttributeModifier(att,add,null);
             return addItemAttributeModifier(itemStack, attribute, attributeModifier, getEquipmentSlot(effectiveSlot));
         }
         return false;
@@ -131,10 +129,10 @@ public class EquipmentEnhancerBlockEntity extends MenuBlockEntityCore {
     }
     public boolean addItemAttributeModifier(ItemStack itemStack, Attribute pAttribute, AttributeModifier pModifier,EquipmentSlot pSlot) {
         itemStack.getOrCreateTag();
-        if (!itemStack.getTag().contains("AttributeModifiers", 9)) {
-            itemStack.getTag().put("AttributeModifiers", new ListTag());
+        if (!itemStack.getTag().contains("ExAttributeModifiers", 9)) {
+            itemStack.getTag().put("ExAttributeModifiers", new ListTag());
         }
-        ListTag listtag = itemStack.getTag().getList("AttributeModifiers", Tag.TAG_COMPOUND);
+        ListTag listtag = itemStack.getTag().getList("ExAttributeModifiers", Tag.TAG_COMPOUND);
         if (!listtag.isEmpty()) {
             for (int i = 0; i < listtag.size(); i++) {
                 CompoundTag compoundTag = listtag.getCompound(i);

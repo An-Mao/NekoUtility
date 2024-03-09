@@ -7,6 +7,7 @@ import anmao.mc.nu.config.Configs;
 import anmao.mc.nu.config.equipment_enhancer.EquipmentEnhancerConfigs;
 import anmao.mc.nu.item.NUCreativeTabs;
 import anmao.mc.nu.item.NUItems;
+import anmao.mc.nu.network.NetReg;
 import anmao.mc.nu.screen.MenuTypes;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -31,6 +32,7 @@ public class NU
         NUBlocks.reg(modEventBus);
         NUBlockEntities.reg(modEventBus);
         MenuTypes.reg(modEventBus);
+        NetReg.reg(modEventBus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Configs.SPEC);
         EquipmentEnhancerConfigs.init();
     }

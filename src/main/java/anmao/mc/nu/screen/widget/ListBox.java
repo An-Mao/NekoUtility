@@ -5,20 +5,24 @@ import anmao.mc.amlib.debug.DeBug;
 import anmao.mc.nu.datatype.DT_ListBoxData;
 import anmao.mc.nu.datatype.DT_XYWH;
 import anmao.mc.nu.datatype.DT_XYWHUV;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class ListBox extends RenderWidgetCore{
-    private final List<DT_ListBoxData> data;
-    private final int dataSize;
+    private List<DT_ListBoxData> data;
+    private int dataSize;
     private int line ,row,index,startIndex;
     private int elementalWidth, elementalHeight;
     private int hSpace, vSpace;
     private DT_XYWHUV bg;
     private int bgColor,textSelectColor,textColor;
+    private int left = 0,top = 0,strX,strY;
     public ListBox(DT_XYWH dt_xywh,int elementalWidth,int elementalHeight, Component pMessage,DT_ListBoxData... data) {
         this(dt_xywh,elementalWidth, elementalHeight,pMessage, Arrays.asList(data));
     }
@@ -33,12 +37,42 @@ public class ListBox extends RenderWidgetCore{
         this.bgColor = _ColorCDT.black;
         this.textColor = _ColorCDT.white;
         this.textSelectColor = _ColorCDT.yellow;
-        setVSpace(2);
-        setHSpace(2);
+        resetAutoSpace();
+        setStrY();
+    }
+    public void setData(List<DT_ListBoxData> data) {
+        this.data = data;
+        this.dataSize = this.data.size();
+        this.index = -1;
+        this.startIndex = 0;
     }
 
+    public void setTop(int top) {
+        this.top = top;
+    }
+
+    @Override
+    public void setFont(Font font) {
+        super.setFont(font);
+        setStrY();
+    }
+
+    public void setLeft(int left) {
+        this.left = left;
+        resetAutoSpace();
+    }
+    public void resetAutoSpace(){
+        double s = elementalWidth % (width - left);
+        s /=  (double) (width - left) / elementalWidth;
+        s /= 2;
+        setVSpace((int) s);
+        setHSpace((int) s);
+    }
     public void setBg(DT_XYWHUV bg) {
         this.bg = bg;
+    }
+    public void setStrY() {
+        this.strY = (elementalWidth/font.lineHeight) / 2;
     }
 
     public void setElementalHeight(int elementalHeight) {
@@ -80,15 +114,18 @@ public class ListBox extends RenderWidgetCore{
 
     @Override
     protected void renderWidget(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        PoseStack poseStack = pGuiGraphics.pose();
+        poseStack.pushPose();
+        poseStack.translate(0, 0, layerZ);
         if (texture != null){
             drawImage(pGuiGraphics,bg);
             for (int i = 0;i < line;i++){
-                int dy = getY() + i * (elementalHeight + vSpace);
+                int dy = left + getY() + i * (elementalHeight + vSpace);
                 for (int r = 0; r < row; r++){
                     if (startIndex < dataSize){
                         int ni =startIndex + i * row + r;
                         if (ni < dataSize) {
-                            int dx = getX() + r * (elementalWidth + hSpace);
+                            int dx = top + getX() + r * (elementalWidth + hSpace);
                             DT_XYWHUV bg = new DT_XYWHUV(dx,dy,elementalWidth,elementalHeight,bgNormal.getUOffset(),bgNormal.getVOffset());
                             int tc = textColor;
                             if (pMouseX > dx
@@ -98,10 +135,10 @@ public class ListBox extends RenderWidgetCore{
                                 bg = new DT_XYWHUV(dx,dy,elementalWidth,elementalHeight,bgSelect.getUOffset(),bgSelect.getVOffset());
                                 tc = textSelectColor;
                                 index = ni;
-                                pGuiGraphics.renderTooltip(font,getData(index).getTooltip(),pMouseX,pMouseY);
+                                pGuiGraphics.renderTooltip(font,getData(index).getTooltip(), Optional.empty(),pMouseX,pMouseY);
                             }
                             drawImage(pGuiGraphics,bg);
-                            drawString(pGuiGraphics,dx,dy,tc,FixStrWidth(getDataComponent(ni)));
+                            drawString(pGuiGraphics,dx,dy + strY,tc,FixStrWidth(getDataComponent(ni)));
                         }
                     }else {
                         break;
@@ -111,12 +148,12 @@ public class ListBox extends RenderWidgetCore{
         }else {
             drawSquare(pGuiGraphics,widget_xywh,bgColor);
             for (int i = 0;i < line;i++){
-                int dy = getY() + i * (elementalHeight + vSpace);
+                int dy = left + getY() + i * (elementalHeight + vSpace);
                 for (int r = 0; r < row; r++){
                     if (startIndex < dataSize){
                         int ni =startIndex + i * row + r;
                         if (ni < dataSize) {
-                            int dx = getX() + r * (elementalWidth + hSpace);
+                            int dx = top + getX() + r * (elementalWidth + hSpace);
                             int bgc = bgUsualColor;
                             int tc = textColor;
                             if (pMouseX > dx
@@ -126,10 +163,10 @@ public class ListBox extends RenderWidgetCore{
                                 bgc = bgSelectColor;
                                 tc = textSelectColor;
                                 index = ni;
-                                pGuiGraphics.renderTooltip(font,getData(index).getTooltip(),pMouseX,pMouseY);
+                                pGuiGraphics.renderTooltip(font,getData(index).getTooltip(), Optional.empty(),pMouseX,pMouseY);
                             }
                             drawSquare(pGuiGraphics, dx, dy, elementalWidth, elementalHeight, bgc);
-                            drawString(pGuiGraphics, dx, dy, tc, FixStrWidth(getDataComponent(ni)));
+                            drawString(pGuiGraphics, dx, dy + strY, tc, FixStrWidth(getDataComponent(ni)));
                         }
                     }else {
                         break;
@@ -137,6 +174,7 @@ public class ListBox extends RenderWidgetCore{
                 }
             }
         }
+        poseStack.popPose();
     }
     public void renderImageElemental(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY){
 
@@ -177,7 +215,7 @@ public class ListBox extends RenderWidgetCore{
     }
     @Override
     public void onClick(double pMouseX, double pMouseY) {
-        if (isMouseOver(pMouseX,pMouseY)){
+        if (isMouseOver(pMouseX,pMouseY) && index >= 0){
             DT_ListBoxData d = getData(index);
             if (d != null){
                 d.OnPress(d.getValue());

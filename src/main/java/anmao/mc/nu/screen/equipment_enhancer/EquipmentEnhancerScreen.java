@@ -1,10 +1,13 @@
 package anmao.mc.nu.screen.equipment_enhancer;
 
+import anmao.mc.amlib.amlib.network.Net;
+import anmao.mc.amlib.amlib.network.easy_net.EasyNetCTS;
+import anmao.mc.amlib.amlib.network.easy_net.EasyNetSTC;
 import anmao.mc.nu.NU;
 import anmao.mc.nu.datatype.DT_ListBoxData;
 import anmao.mc.nu.datatype.DT_XYWH;
-import anmao.mc.nu.network.index.NetCore;
-import anmao.mc.nu.network.index.packet.EquipmentEnhancerPacketCTS;
+import anmao.mc.nu.datatype.DT_XYWHUV;
+import anmao.mc.nu.network.NetReg;
 import anmao.mc.nu.screen.widget.DropDownListBox;
 import anmao.mc.nu.screen.widget.ImageButton;
 import anmao.mc.nu.screen.widget.ListBox;
@@ -21,6 +24,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +44,7 @@ public class EquipmentEnhancerScreen extends AbstractContainerScreen<EquipmentEn
     }
 
     @Override
-    public void resize(Minecraft pMinecraft, int pWidth, int pHeight) {
+    public void resize(@NotNull Minecraft pMinecraft, int pWidth, int pHeight) {
         super.resize(pMinecraft, pWidth, pHeight);
         init();
     }
@@ -55,85 +59,38 @@ public class EquipmentEnhancerScreen extends AbstractContainerScreen<EquipmentEn
         this.leftPos = this.startX = (width - 176) / 2;
         this.topPos = this.startY = (height - 166) / 2;
         this.AttritubeListBox = new DropDownListBox(
-                new DT_XYWH(startX + 52,startY+26,72,12),
+                new DT_XYWH(startX + 52,startY+40,72,12),
                 Component.translatable("screen.nu.equipment_enhancer.drop_down_list.tip"),
                 getAllAtt()
                 );
         AttritubeListBox.setLine(5);
         this.addRenderableWidget(this.AttritubeListBox);
+
         this.EnhancerSlotListBox = new DropDownListBox(
-                new DT_XYWH(startX + 52,startY+42,72,12),
+                new DT_XYWH(startX + 52,startY+53,72,12),
                 Component.translatable("screen.nu.equipment_enhancer.enhancer_slot_list.tip"),
                 getAllSlot()
         );
         EnhancerSlotListBox.setLine(7);
         this.addRenderableWidget(this.EnhancerSlotListBox);
-        this.send = new ImageButton(new DT_XYWH(startX + 147,startY+55,18,18),Component.literal("send"),this::sendPack);
-                //(startX + 147,startY+55,22,22,0,166,TEXTURE,pButton -> sendPack());
+        DT_XYWH sendPos = new DT_XYWH(startX + 132,startY+52,18,18);
+        this.send = new ImageButton(sendPos,Component.literal("send"),this::sendPack);
+        this.send.setTexture(TEXTURE);
+        this.send.setBgSelect(new DT_XYWHUV(sendPos,2,188));
+        this.send.setBgNormal(new DT_XYWHUV(sendPos,2,188));
         this.addRenderableWidget(this.send);
-
-        this.addRenderableWidget(
-                new ListBox(
-                        new DT_XYWH(0,0,200,100),
-                        32,12,Component.literal("test"),
-                        new DT_ListBoxData(Component.literal("list - 1"),"1", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 2"),"2", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 3"),"3", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 4"),"4", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 5"),"5", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 6"),"6", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 7"),"7", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 8"),"8", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 9"),"9", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 10"),"10", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 11"),"11", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 12"),"12", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 13"),"13", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 14"),"14", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 15"),"15", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 1"),"1", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 2"),"2", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 3"),"3", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 4"),"4", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 5"),"5", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 6"),"6", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 7"),"7", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 8"),"8", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 9"),"9", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 10"),"10", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 11"),"11", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 12"),"12", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 13"),"13", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 14"),"14", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 15"),"15", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 1"),"1", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 2"),"2", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 3"),"3", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 4"),"4", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 5"),"5", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 6"),"6", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 7"),"7", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 8"),"8", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 9"),"9", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 10"),"10", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 11"),"11", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 12"),"12", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 13"),"13", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 14"),"14", System.out::println),
-                        new DT_ListBoxData(Component.literal("list - 15"),"15", System.out::println)
-                )
-        );
     }
     public void sendPack(){
         if (this.att != null && this.effectiveSlot != null){
             CompoundTag dat = new CompoundTag();
+            dat.putString(Net.EASY_NET_KEY, NetReg.EQUIPMENT_ENHANCER.getId().toString());
             dat.putString("attribute.name",this.att.getNamespace());
             dat.putString("attribute.path",this.att.getPath());
             dat.putString("effective_slot",this.effectiveSlot);
             dat.putInt("block_entity.x",menu.getX());
             dat.putInt("block_entity.y",menu.getY());
             dat.putInt("block_entity.z",menu.getZ());
-            NetCore.sendToServer(new EquipmentEnhancerPacketCTS(dat));
+            Net.EasyNetCTS(new EasyNetCTS(dat));
         }
     }
     public void ddlbClick(Object v){

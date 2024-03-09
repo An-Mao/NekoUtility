@@ -1,13 +1,14 @@
 package anmao.mc.nu.block.index;
 
+import anmao.mc.amlib.amlib.network.Net;
+import anmao.mc.amlib.amlib.network.easy_net.EasyNetSTC;
 import anmao.mc.amlib.enchantment.EnchantmentHelper;
 import anmao.mc.nu.block.NUBlockEntities;
 import anmao.mc.nu.block.MenuBlockEntityCore;
 import anmao.mc.nu.config.Configs;
 import anmao.mc.nu.datatype.EnchantDataType;
 import anmao.mc.nu.datatype.EnchantDataTypeCore;
-import anmao.mc.nu.network.index.NetCore;
-import anmao.mc.nu.network.index.packet.IndexPacketSTC;
+import anmao.mc.nu.network.NetReg;
 import anmao.mc.nu.screen.index.IndexMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -270,7 +271,9 @@ public class IndexBlockEntity extends MenuBlockEntityCore {
             level.sendBlockUpdated(getBlockPos(),getBlockState(),getBlockState(),3);
         }
         if (this.player != null) {
-            NetCore.sendToPlayer(new IndexPacketSTC(getUpdateTag()), (ServerPlayer) this.player);
+            CompoundTag data = getUpdateTag();
+            data.putString(Net.EASY_NET_KEY, NetReg.INDEX_BLOCK.getId().toString());
+            Net.EasyNetSTC(new EasyNetSTC(data), (ServerPlayer) this.player);
         }
     }
     public boolean shouldRenderFace(Direction pFace) {

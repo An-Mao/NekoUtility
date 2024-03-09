@@ -25,35 +25,17 @@ public class EquipmentEnhancerMenu extends AbstractContainerMenuCore {
         this(pContainerId,inventory, EntityHelper.getBlockEntity(inventory.player,ex.readBlockPos()),new SimpleContainerData(3));
     }
     public EquipmentEnhancerMenu(int pContainerId, Inventory inventory , BlockEntity blockEntity,ContainerData data) {
-        super(MenuTypes.EQUIPMENT_ENHANCER_MENU.get(), pContainerId,17);
-        checkContainerSize(inventory,17);
+        super(MenuTypes.EQUIPMENT_ENHANCER_MENU.get(), pContainerId,EquipmentEnhancerBlockEntity.SlotSize);
+        checkContainerSize(inventory,EquipmentEnhancerBlockEntity.SlotSize);
         this.enhancerBlock = (EquipmentEnhancerBlockEntity) blockEntity;
         this.level = inventory.player.level();
         this.data = data;
         addPlayerHotBar(inventory,8,142,18);
         addPlayerInventory(inventory,8,84,18);
         this.enhancerBlock.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler,0,8,7));
-            this.addSlot(new SlotItemHandler(iItemHandler,1,8,25));
-            this.addSlot(new SlotItemHandler(iItemHandler,2,8,43));
-            this.addSlot(new SlotItemHandler(iItemHandler,3,8,61));
-
-            this.addSlot(new SlotItemHandler(iItemHandler,4,31,7));
-            this.addSlot(new SlotItemHandler(iItemHandler,5,31,25));
-            this.addSlot(new SlotItemHandler(iItemHandler,6,31,43));
-            this.addSlot(new SlotItemHandler(iItemHandler,7,31,61));
-
-            this.addSlot(new SlotItemHandler(iItemHandler,8,53,7));
-            this.addSlot(new SlotItemHandler(iItemHandler,9,71,7));
-            this.addSlot(new SlotItemHandler(iItemHandler,10,89,7));
-            this.addSlot(new SlotItemHandler(iItemHandler,11,107,7));
-
-            this.addSlot(new SlotItemHandler(iItemHandler,12,54,61));
-            this.addSlot(new SlotItemHandler(iItemHandler,13,72,61));
-            this.addSlot(new SlotItemHandler(iItemHandler,14,90,61));
-            this.addSlot(new SlotItemHandler(iItemHandler,15,108,61));
-
-            this.addSlot(new SlotItemHandler(iItemHandler,16,152,34));
+            this.addSlot(new SlotItemHandler(iItemHandler,0,26,16));
+            this.addSlot(new SlotItemHandler(iItemHandler,1,75,16));
+            this.addSlot(new SlotItemHandler(iItemHandler,2,133,16));
         });
         addDataSlots(data);
     }

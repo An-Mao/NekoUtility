@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @OnlyIn(Dist.CLIENT)
 public class DropDownListBox extends DropDownListBoxCore {
@@ -26,7 +27,7 @@ public class DropDownListBox extends DropDownListBoxCore {
     private boolean showList = false;
     private int line,lineHeight,linePosY;
     private int pages,nowPage;
-    private int layerZ = 1000;
+    private int layerZ = 300;
     public DropDownListBox(DT_XYWH dt_xywh, Component pMessage, DT_ListBoxData... data) {
         this(dt_xywh,pMessage,Arrays.asList(data));
     }
@@ -78,12 +79,12 @@ public class DropDownListBox extends DropDownListBoxCore {
         }
         return Component.literal("---NULL---");
     }
-    public Component getDataTooltip(int index){
+    public List<Component> getDataTooltip(int index){
         DT_ListBoxData dropDownListBoxData = getData(index);
         if (dropDownListBoxData != null){
             return dropDownListBoxData.getTooltip();
         }
-        return Component.literal("---NULL---");
+        return List.of(Component.literal("---NULL---")) ;
     }
     public DT_ListBoxData getSelectData(){
         if (nowSelectIndex >= 0 && nowSelectIndex < dataList.size()){
@@ -126,7 +127,6 @@ public class DropDownListBox extends DropDownListBoxCore {
         if (showList) {
             poseStack.translate(0, 0, layerZ+1);
         }else {
-
             poseStack.translate(0, 0, layerZ);
         }
         if (texture == null) {
@@ -149,7 +149,7 @@ public class DropDownListBox extends DropDownListBoxCore {
                 if (pMouseX > getX() && pMouseX < getX() + width && pMouseY > lineY && pMouseY < lineY + dt_xywh.height()){
                     bgc = bgHoverColor;
                     hc = textHoverColor;
-                    guiGraphics.renderTooltip(font,getDataTooltip(i),pMouseX,pMouseY);
+                    guiGraphics.renderTooltip(font,getDataTooltip(i), Optional.empty(),pMouseX,pMouseY);
                 }
                 if (texture == null) {
                     guiGraphics.fill(dt_xywh.x(),  lineY,dt_xywh.x()+width, lineY+ dt_xywh.height(), bgc);

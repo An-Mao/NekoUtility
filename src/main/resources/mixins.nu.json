@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "anmao.mc.nu.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "mixins.nu.refmap.json",
+  "mixins": [
+    "ItemStackMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

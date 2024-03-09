@@ -1,7 +1,6 @@
 package anmao.mc.nu.event;
 
 import anmao.mc.nu.NU;
-import anmao.mc.nu.network.index.NetCore;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -11,6 +10,5 @@ public class NUEvent {
     @SubscribeEvent
     public static void commonSetup(final FMLCommonSetupEvent event)
     {
-        NetCore.reg();
     }
 }

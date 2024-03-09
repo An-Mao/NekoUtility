@@ -33,6 +33,7 @@ public class ImageButton extends RenderWidgetCore {
                 }
             }else {
                 drawSquare(pGuiGraphics,bgSelectColor);
+                drawString(pGuiGraphics,getX() ,getY(),0x000000,getMessage());
             }
             pGuiGraphics.renderTooltip(font,getMessage(),pMouseX,pMouseY);
         }else {
@@ -43,6 +44,7 @@ public class ImageButton extends RenderWidgetCore {
                 }
             }else {
                 drawSquare(pGuiGraphics,bgUsualColor);
+                drawString(pGuiGraphics,getX(),getY(),0x000000,getMessage());
             }
         }
     }

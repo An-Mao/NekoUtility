@@ -38,10 +38,10 @@ public class IndexMenu extends AbstractContainerMenuCore {
         index = (IndexBlockEntity) ent;
         this.level = inv.player.level();
         this.data = dat;
-        addPlayerInventory(inv,108,84,18);
-        addPlayerHotBar(inv,108,142,18);
+        addPlayerInventory(inv,143,140,18);
+        addPlayerHotBar(inv,143,198,18);
         this.index.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
-            this.addSlot(new SlotItemHandler(iItemHandler,0,162,37){
+            this.addSlot(new SlotItemHandler(iItemHandler,0,83,140){
 
                 @Override
                 public int getMaxStackSize(@NotNull ItemStack itemStack) {
@@ -51,7 +51,7 @@ public class IndexMenu extends AbstractContainerMenuCore {
                     return 1;
                 }
             });
-            this.addSlot(new SlotItemHandler(iItemHandler,1,220,37){
+            this.addSlot(new SlotItemHandler(iItemHandler,1,82,193){
                 @Override
                 public boolean mayPlace(@NotNull ItemStack stack) {
                     return false;
@@ -68,7 +68,7 @@ public class IndexMenu extends AbstractContainerMenuCore {
     public int getScaleProgress(){
         int progress = data.get(0);
         int maxProgress = data.get(1);
-        int progressSize = 24;
+        int progressSize = 28;
         return maxProgress != 0 && progress != 0 ? progress * progressSize / maxProgress : 0;
     }
     public int getX(){
